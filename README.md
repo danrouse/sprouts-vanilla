@@ -1,34 +1,38 @@
 # sprouts
 
- - draw syntax trees in the browser
- - build tree from strings
- - full Unicode support
- - export as SVG or PNG
+ - Draw syntax trees in the browser
+ - Build tree from strings
+ - Full Unicode support
+ - Export as SVG or PNG
 
 
-usage
+Usage
 -----
- - webapp is live at [http://rouse.house/sprouts/](http://rouse.house/sprouts/)
+ - A live version of sprouts is online at [http://rouse.house/sprouts/](http://rouse.house/sprouts/).
 
 
-todo
-----
- - **planned features**
+Roadmap
+-------
+ - **Major features**
  	- movement
  	- interactive drawing
  	- merge (bottom-up drawing)
+
+ - **Minor features**
  	- triangles
+ 	- lines between head and node label
  	- IPA keyboard
 
- - **tech**
+ - **Tech/UI**
  	- support webfonts and arbitrary local fonts (redo fonts menu)
  	- better garbage collection
  	- svg icon system
+ 	- tooltips (icon tooltips?)
 
 
-contributing
+Contributing
 ------------
- - built using [gulp](http://gulpjs.com), scaffolded with [yeoman](http://yeoman.io) ([generator-gulp-webapp](https://github.com/yeoman/generator-gulp-webapp))
+ - Built using [gulp](http://gulpjs.com), scaffolded with [yeoman](http://yeoman.io) ([generator-gulp-webapp](https://github.com/yeoman/generator-gulp-webapp))
  - `npm install` to setup development dependencies
  - `gulp watch` to setup livereload + local web server
  - `gulp docs` to generate documentation in docs/

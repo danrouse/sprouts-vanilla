@@ -7,6 +7,8 @@ $blue: #bcd1ff;
 $brown: #2e1a06;
 $red: #9b1d00;
 
+$green2: lighten($green, 10%);
+
 html, body { height: 100%; }
 body {
     background-color: $white;
@@ -49,7 +51,7 @@ body {
         }
 
         &:hover {
-            background-color: lighten($green, 10%);
+            background-color: $green2;
         }
     }
 }
@@ -121,8 +123,11 @@ body {
 
         border: 0;
         border-bottom: 2px solid $brown;
-        background-color: $blue;
-
+        background-color: $green;
+        
+        &:hover {
+            background-color: $green2;
+        }
         &:focus {
             background-color: $white;
         }
