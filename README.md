@@ -3,15 +3,18 @@
  - draw syntax trees in the browser
  - build tree from strings
  - interactive drawing, top-down or bottom-up
- - stylable using CSS
  - full Unicode support
  - export as SVG or PNG
 
 
 usage
--------
+-----
  - live version currently unavailable
 
+todo
+----
+ - use embedded CSS instead of SVG attributes where possible
+ - support webfonts and arbitrary local fonts
 
 contributing
 ------------

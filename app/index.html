@@ -36,7 +36,13 @@
                 <li class="heading">Primary Font</li>
                 <li>
                     <label for="settings_nodeFontFamily">Family</label>
-                    <input name="settings_nodeFontFamily" type="text" class="setting">
+                    <select name="settings_nodeFontFamily" class="setting">
+                        <option value="Times New Roman" class="font-option">Times New Roman</option>
+                        <option value="Arial" class="font-option">Arial</option>
+                        <option value="Impact" class="font-option">Impact</option>
+                        <option value="Comic Sans MS" class="font-option">Comic Sans</option>
+                        <option value="Segoe UI" class="font-option">Segoe UI</option>
+                    </select>
                 </li>
                 <li>
                     <label for="settings_nodeFontSize">Size</label>
@@ -50,11 +56,11 @@
                     <ul class="buttons">
                         <li>
                             <label for="settings_nodeFontBold" class="button-label">Bold</label>
-                            <input type="checkbox" name="settings_nodeFontBold" checked>
+                            <input type="checkbox" name="settings_nodeFontBold" class="setting">
                         </li>
                         <li>
                             <label for="settings_nodeFontItalic" class="button-label">Italic</label>
-                            <input type="checkbox" name="settings_nodeFontItalic">
+                            <input type="checkbox" name="settings_nodeFontItalic" class="setting">
                         </li>
                     </ul>
                 </li>
@@ -64,7 +70,13 @@
                 <li class="heading">Lexical Font</li>
                 <li>
                     <label for="settings_headFontFamily">Family</label>
-                    <input name="settings_headFontFamily" type="text" class="setting">
+                    <select name="settings_headFontFamily" class="setting">
+                        <option value="Times New Roman" class="font-option">Times New Roman</option>
+                        <option value="Arial" class="font-option">Arial</option>
+                        <option value="Impact" class="font-option">Impact</option>
+                        <option value="Comic Sans MS" class="font-option">Comic Sans</option>
+                        <option value="Segoe UI" class="font-option">Segoe UI</option>
+                    </select>
                 </li>
                 <li>
                     <label for="settings_headFontSize">Size</label>
@@ -78,11 +90,11 @@
                     <ul class="buttons">
                         <li>
                             <label for="settings_headFontBold" class="button-label">Bold</label>
-                            <input type="checkbox" name="settings_headFontBold">
+                            <input type="checkbox" name="settings_headFontBold" class="setting">
                         </li>
                         <li>
                             <label for="settings_headFontItalic" class="button-label">Italic</label>
-                            <input type="checkbox" name="settings_headFontItalic" checked>
+                            <input type="checkbox" name="settings_headFontItalic" class="setting">
                         </li>
                     </ul>
                 </li>
@@ -90,20 +102,24 @@
 
             <ul class="settings">
                 <li>
-                    <label for="settings_nodeSpacingY">Vertical spacing</label>
-                    <input name="settings_nodeSpacingY" type="number" class="setting" value="50">
+                    <label for="settings_nodeSpacingY">Child spacing (vertical)</label>
+                    <input name="settings_nodeSpacingY" type="number" class="setting">
                 </li>
                 <li>
-                    <label for="settings_nodeSpacingX">Horizontal spacing</label>
-                    <input name="settings_nodeSpacingX" type="number" class="setting" value="12">
+                    <label for="settings_nodeSpacingX">Sibling spacing (horizontal)</label>
+                    <input name="settings_nodeSpacingX" type="number" class="setting">
+                </li>
+                <li>
+                    <label for="settings_linePadding">Line padding</label>
+                    <input name="settings_linePadding" type="number" class="setting">
                 </li>
                 <li>
                     <label for="settings_lineWidth">Line width</label>
-                    <input name="settings_lineWidth" type="number" class="setting" value="2">
+                    <input name="settings_lineWidth" type="number" class="setting">
                 </li>
                 <li>
                     <label for="settings_lineColor">Line color</label>
-                    <input name="settings_lineColor" type="color" class="setting" value="#83d935">
+                    <input name="settings_lineColor" type="color" class="setting">
                 </li>
             </ul>
         </aside>

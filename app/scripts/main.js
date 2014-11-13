@@ -1,5 +1,24 @@
 'use strict';
 
+// default tree options
+var defaults = {
+	nodeFontFamily: 'Arial',
+	nodeFontSize: 16,
+	nodeFontColor: '#0000ff',
+	nodeFontBold: true,
+	nodeFontItalic: false,
+	headFontFamily: 'Times New Roman',
+	headFontSize: 10,
+	headFontColor: '#ff0000',
+	headFontBold: false,
+	headFontItalic: true,
+	nodeSpacingY: 50,
+	nodeSpacingX: 12,
+	linePadding: 2,
+	lineWidth: 2,
+	lineColor: '#333333'
+};
+
 // wrapper around SVG+child element creation
 // jQuery can't handle the namespace issues
 // provides elem._attrs({}) to set html attributes from an object
@@ -36,7 +55,7 @@ var TreeNode = function(options) {
 		this.type = options.type;
 		this.head = options.head;
 	}
-}
+};
 
 TreeNode.prototype = {
 	addChild: function(options) {
@@ -70,9 +89,9 @@ TreeNode.prototype = {
 			if(trackPhrase && currentPhrase.length &&
 			   (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
 				// create root if we need to
-				var newObject = currentObject
-						? currentObject.addChild({ type: currentPhrase, head: currentHead })
-						: new TreeNode({ type: currentPhrase, head: currentHead, options: this.options });
+				var newObject = currentObject ?
+						currentObject.addChild({ type: currentPhrase, head: currentHead }) :
+						new TreeNode({ type: currentPhrase, head: currentHead, options: this.options });
 
 				currentObject = newObject;
 				currentPhrase = '';
@@ -145,6 +164,7 @@ TreeNode.prototype = {
 		var svg = _svgelem('svg'),
 			lines = [],
 			elemWidth = 0,
+			label, head, children,
 			i;
 
 		// SVG must be rendered for getBBox to get size
@@ -153,11 +173,11 @@ TreeNode.prototype = {
 		$('body').append(svg);
 
 		// add main label
-		var label = _svgelem('text', {
+		label = _svgelem('text', {
 			'class': 'sprouts__label',
 			'font-family': this.options.nodeFontFamily,
 			'font-size': this.options.nodeFontSize,
-			'color': this.options.nodeFontColor,
+			'fill': this.options.nodeFontColor,
 			'font-weight': this.options.nodeFontBold ? 'bold' : 'normal',
 			'font-style': this.options.nodeFontItalic ? 'italic' : 'normal'
 		});
@@ -169,7 +189,7 @@ TreeNode.prototype = {
 
 		// render children
 		if(this.children.length) {
-			var children = _svgelem('g', { 'class': 'children' });
+			children = _svgelem('g', { 'class': 'children' });
 			svg.appendChild(children);
 
 			for(i in this.children) {
@@ -200,7 +220,7 @@ TreeNode.prototype = {
 				// and it's thinner than its parent
 				if(this.children.length === 1 && childWidth < labelWidth) {
 					child._attrs({ 'x': (labelWidth - childWidth) / 2 });
-					line._attrs({ 'x1': ((labelWidth - childWidth) / 2) + (childWidth / 2) })
+					line._attrs({ 'x1': ((labelWidth - childWidth) / 2) + (childWidth / 2) });
 				}
 
 				// increase total width, add x-padding if not the last item
@@ -209,11 +229,11 @@ TreeNode.prototype = {
 
 		} else if(this.head.length) {
 			// no children, but there is a lexical head to display
-			var head = _svgelem('text', {
+			head = _svgelem('text', {
 				'class': 'sprouts__head',
 				'font-family': this.options.headFontFamily,
 				'font-size': this.options.headFontSize,
-				'color': this.options.headFontColor,
+				'fill': this.options.headFontColor,
 				'font-weight': this.options.headFontBold ? 'bold' : 'normal',
 				'font-style': this.options.headFontItalic ? 'italic' : 'normal'
 			});
@@ -264,23 +284,6 @@ TreeNode.prototype = {
 
 // tree master object
 // provides a root object, text parser, and writes the product to the DOM
-var defaults = {
-	nodeFontFamily: 'Open Sans',
-	nodeFontSize: 16,
-	nodeFontColor: '#0000ff',
-	nodeFontBold: true,
-	nodeFontItalic: false,
-	headFontFamily: 'Times New Roman',
-	headFontSize: 10,
-	headFontColor: '#ff0000',
-	headFontBold: false,
-	headFontItalic: true,
-	nodeSpacingY: 50,
-	nodeSpacingX: 12,
-	linePadding: 2,
-	lineWidth: 2,
-	lineColor: '#333333'
-}
 var Tree = function(contents, initialOptions) {
 	var options = this.options = initialOptions || {};
 
@@ -298,6 +301,7 @@ var Tree = function(contents, initialOptions) {
 		return this.root.toString();
 	};
 
+	// generates SVG and updates the page
 	this.draw = function(fromText) {
 		// replace SVG on the page
 		var svg = this.root.toSVG();
@@ -327,34 +331,40 @@ var Tree = function(contents, initialOptions) {
 // entry point (DOM ready)
 jQuery(function() {
 	// make a basic tree
-	var tree = new Tree("[XP [YP [ZP [Z foo]]] [WP [FP [XX [X bar]] [AF]]] [WP] [WP]]");
+	var tree = new Tree('[XP [YP [ZP [Z foo]]] [WP [FP [XX [X bar]] [AF]]] [WP] [WP]]');
 
-	//var X = tree.root.addChild('X', 'test');
-	// var YP = tree.root.addChild('YP');
-	// var WP = tree.root.addChild('WP');
-	// var FP = WP.addChild('FP');
-	// var XX = FP.addChild('XX');
-	// XX.addChild('X', 'bar');
-	// FP.addChild('AF');
-	// tree.root.addChild('WP');
-	// tree.root.addChild('WP');
-
-	// var ZP = YP.addChild('ZP');
-	// var Z = ZP.addChild('Z', 'foo');
+	// post initial settings to DOM
+	var elem;
+	for(var key in defaults) {
+		elem = document.getElementsByName('settings_' + key);
+		if(elem.length) {
+			if(elem[0].type === 'checkbox') {
+				elem[0].checked = defaults[key];
+			} else if(elem[0].nodeName === 'SELECT') {
+				elem[0].querySelector('[value="' + defaults[key] + '"]').selected = true;
+			} else {
+				elem[0].value = defaults[key];
+			}
+		} else {
+			console.log('no DOM element for setting', key);
+		}
+	}
 
 	// settings handlers
-	$('.setting').on('change', function(event) {
+	$('.setting').on('change', function() {
 		// remove 'settings_' from name for options key
 		var value = this.value;
 		if(this.type === 'number' || this.type === 'range') {
 			value = parseFloat(value);
+		} else if(this.type === 'checkbox') {
+			value = this.checked;
 		}
 		tree.options[this.name.substr(9)] = value;
 		tree.draw(true);
 	});
 
 	// databind the tree contents text input
-	$('#sprouts-text').on('keyup', function(event) {
+	$('#sprouts-text').on('keyup', function() {
 		tree.root = new TreeNode({
 		 	fromString: this.value,
 		 	options: tree.options });
