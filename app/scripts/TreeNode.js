@@ -282,9 +282,9 @@ TreeNode.prototype = {
         // get total width (label + children) and center label
         var bbox = svg.getBBox();
         label._attrs({
-            'alignment-baseline': 'text-before-edge',
             'text-anchor': 'middle',
-            'x': bbox.width / 2
+            'x': bbox.width / 2,
+            'y': labelY * 0.8
         });
 
         // point lines towards center
@@ -298,16 +298,14 @@ TreeNode.prototype = {
         // move lexical head under label as well
         if(head) {
             head._attrs({
-                'alignment-baseline': 'hanging',
-                'y': labelY + 2 // 2px static y padding to avoid cutoff
+                'y': (labelY * 0.8) + head.getBBox().height
             });
 
-            // make the svg slightly taller to account for the 2 units of padding we need
             // recalc bbox height for moved text
-            bbox.height = svg.getBBox().height + 2;
+            bbox.height = svg.getBBox().height;
         }
 
-        // explicitly state final size (we can scale later)
+        // explicitly state final size
         svg._attrs({
             width: bbox.width,
             height: bbox.height

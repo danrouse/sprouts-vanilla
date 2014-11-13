@@ -40,18 +40,22 @@ body {
     height: 70%;
     max-width: 25%;
     border-right: 4px solid $brown;
-    padding: 1em;
     background-color: $tan;
     overflow-y: auto;
+
+    strong {
+        display: block;
+        padding: 1rem;
+    }
 }
     .settings {
-        border: 2px solid $brown;
         margin-bottom: 1rem;
         font-size: 80%;
         list-style: none;
 
         .heading {
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem 1rem;
+            border-top: 2px solid $brown;
             border-bottom: 2px solid $brown;
             font-weight: bold;
             background-color: $blue;
