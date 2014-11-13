@@ -42,13 +42,14 @@ body {
         border-left: 4px solid $brown;
         border-right: 4px solid $brown;
         padding: 0.25em 1em;
+        background-color: $green;
 
         &:first-child {
             border-left: 0;
         }
 
         &:hover {
-            background-color: $red;
+            background-color: lighten($green, 10%);
         }
     }
 }

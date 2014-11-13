@@ -60,10 +60,25 @@
 
     // action buttons
     var actions = {
+        saveSVG: function() {
+            var slug = tree.toString(true),
+                svg = tree.root.svg,
+                xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + svg.offsetWidth +
+                    '" height="' + svg.offsetHeight + '">' + svg.innerHTML + '</svg>';
+
+            // make slug filename-friendly
+            slug = slug.toLowerCase().replace(/\s+/g, '-').substr(0,32);
+
+            _download('data:image/svg+xml,' + encodeURIComponent(xml), 'sprouts-' + slug + '.svg');
+        },
+
         savePNG: function() {
-            var png = tree.root.toPNG();
-            window.open(png, 'sprouts PNG', 'width=' + tree.root.svg.offsetWidth +
-                ',height=' + tree.root.svg.offsetHeight);
+            var slug = tree.toString(true);
+
+            // make slug filename-friendly
+            slug = slug.toLowerCase().replace(/\s+/g, '-').substr(0,32);
+
+            _download(tree.root.toPNG(), 'sprouts-' + slug + '.png');
         }
     };
     function handleAction(event) {

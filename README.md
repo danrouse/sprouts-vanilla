@@ -8,22 +8,22 @@
 
 usage
 -----
- - live version currently unavailable
+ - webapp is live at [http://rouse.house/sprouts/](http://rouse.house/sprouts/)
 
 
 todo
 ----
- - **features**
+ - **planned features**
  	- movement
  	- interactive drawing
  	- merge (bottom-up drawing)
  	- triangles
+ 	- IPA keyboard
 
  - **tech**
- 	- use embedded CSS instead of SVG attributes where possible
  	- support webfonts and arbitrary local fonts (redo fonts menu)
  	- better garbage collection
- 	- **haven't tested a thing outside of chrome**
+ 	- svg icon system
 
 
 contributing

@@ -181,22 +181,23 @@ TreeNode.prototype = {
      * convert this node and its children to bracketed text
      *
      * @method toString
+     * @param headsOnly {Boolean} only output heads, no brackets or phrase names
      * @return bracketed_text {string}
      **/
-    toString: function() {
-        var out = '[' + this.type;
+    toString: function(headsOnly) {
+        var out = headsOnly ? '' : this.type;
 
         if(this.children.length) {
             // recurse through children
             for(var i in this.children) {
-                out += ' ' + this.children[i].toString();
+                out += ' ' + this.children[i].toString(headsOnly);
             }
         } else if(this.head.length) {
             // add head
             out += ' ' + this.head;
         }
 
-        return out + ']';
+        return headsOnly ? out.trim() : '[' + out + ']';
     },
 
     /**

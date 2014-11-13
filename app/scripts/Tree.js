@@ -55,10 +55,11 @@ Tree.prototype = {
      * converts entire Tree structure to bracketed text
      *
      * @method toString
-     * @return bracketed_text {String}
+     * @param headsOnly {Boolean} only output heads, no brackets or phrase names
+     * @return bracketed_text {string}
      **/
-    toString: function() {
-        return this.root.toString();
+    toString: function(headsOnly) {
+        return this.root.toString(headsOnly);
     },
 
     /**
