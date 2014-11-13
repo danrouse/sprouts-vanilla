@@ -1,0 +1,94 @@
+.sidebar {
+    float: left;
+    height: 70%;
+    max-width: 25%;
+    border-right: $border solid $brown;
+    background-color: $tan;
+    overflow-y: auto;
+
+    h2 {
+        display: block;
+        padding: $padding;
+    }
+    h3, .heading {
+        padding: $padding;
+        border-top: ($border / 2) solid $brown;
+        border-bottom: ($border / 2) solid $brown;
+        font-weight: bold;
+        //background-color: $blue;
+        text-align: left;
+    }
+}
+    .settings {
+        margin-bottom: $padding;
+        font-size: 80%;
+        list-style: none;
+
+        > li {
+            display: flex;
+            justify-content: space-between;
+
+            > label {
+                // position: absolute;
+                // top: 0.5em;
+                // left: 0.5em;
+                //min-width: 20%;
+                padding: ($padding / 2) $padding;
+                flex-grow: 1;
+            }
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="color"],
+        select {
+            height: 2em;
+            flex-grow: 2;
+            text-align: right;
+            //width: 40%;
+        }
+
+        .buttons {
+            text-align: center;
+            flex-grow: 1;
+        }
+    }
+
+    // font selectors
+    .font-selector {
+        position: relative;
+        padding: $padding;
+
+        .font-preview {
+            margin-bottom: $padding;
+
+            &:hover {
+                background-color: $blue;
+                cursor: pointer;
+            }
+        }
+
+        label {
+            margin-right: $padding;
+        }
+
+        // font list
+        ul {
+            display: none;
+            position: absolute;
+            top: 0;
+            width: 100%;
+
+            &.visible {
+                display: block;
+            }
+        }
+            li {
+                padding: ($padding / 2) $padding;
+                background-color: $blue;
+
+                &:hover {
+                    background-color: $green;
+                    cursor: pointer;
+                }
+            }
+    }

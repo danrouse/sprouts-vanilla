@@ -1,13 +1,6 @@
 @import "reset";
+@import "variables";
 
-$tan: #cfba95;
-$white: #efe8dc;
-$green: #83d935;
-$blue: #bcd1ff;
-$brown: #2e1a06;
-$red: #9b1d00;
-
-$green2: lighten($green, 10%);
 
 html, body { height: 100%; }
 body {
@@ -21,8 +14,8 @@ body {
 
 .header {
     height: 20%;
-    border-top: 8px solid $brown;
-    border-bottom: 8px solid $brown;
+    border-top: ($border * 2) solid $brown;
+    border-bottom: ($border * 2) solid $brown;
     padding: 1em;
 
     background-color: $blue;
@@ -34,16 +27,16 @@ body {
 
 .toolbar {
     height: 5%;
-    border-bottom: 4px solid $brown;
-    background-color: lighten($blue, 5%);
+    border-bottom: $border solid $brown;
+    background-color: $blue2;
 
     .buttons, .button {
         height: 100%;
     }
     .button {
-        border-left: 4px solid $brown;
-        border-right: 4px solid $brown;
-        padding: 0.25em 1em;
+        border-left: ($border / 2) solid $brown;
+        border-right: ($border / 2) solid $brown;
+        padding: ($padding / 2) $padding;
         background-color: $blue;
 
         &:first-child {
@@ -54,64 +47,7 @@ body {
             background-color: $green2;
         }
     }
-}
-
-.sidebar {
-    float: left;
-    height: 70%;
-    max-width: 25%;
-    border-right: 4px solid $brown;
-    background-color: $tan;
-    overflow-y: auto;
-
-    strong {
-        display: block;
-        padding: 1rem;
-    }
-}
-    .settings {
-        margin-bottom: 1rem;
-        font-size: 80%;
-        list-style: none;
-
-        .heading {
-            padding: 0.25rem 1rem;
-            border-top: 2px solid $brown;
-            border-bottom: 2px solid $brown;
-            font-weight: bold;
-            background-color: $blue;
-            text-align: left;
-        }
-
-        > li {
-            display: flex;
-            justify-content: space-between;
-
-            > label {
-                // position: absolute;
-                // top: 0.5em;
-                // left: 0.5em;
-                //min-width: 20%;
-                padding: 0.5em;
-                flex-grow: 1;
-            }
-        }
-        input[type="text"],
-        input[type="number"],
-        input[type="color"],
-        select {
-            height: 2em;
-            flex-grow: 2;
-            text-align: right;
-            //width: 40%;
-        }
-
-        .buttons {
-            text-align: center;
-            flex-grow: 1;
-        }
-    }
-        
+}        
 
 .main {
     height: 70%;
@@ -119,10 +55,12 @@ body {
 }
     .sprouts-text {
         width: 100%;
-        padding: .5em;
-
+        padding: $padding;
         border: 0;
-        border-bottom: 2px solid $brown;
+        border-bottom: ($border / 2) solid $brown;
+        font-size: 105%;
+        letter-spacing: 1px;
+
         background-color: $green;
         
         &:hover {
@@ -139,16 +77,16 @@ body {
 .footer {
     clear: both;
     height: 5%;
-    border-top: 4px solid $brown;
+    border-top: $border solid $brown;
     background-color: $tan;
     font-size: 80%;
-    padding: .25rem 1rem;
+    padding: $padding;
 }
 
 // form styles
 input, textarea, select {
     background-color: $white;
-    border: 2px solid $tan;
+    border: ($border / 2) solid $tan;
 }
 
 // links
@@ -170,4 +108,6 @@ a {
         }
     }
 
+
+@import "sidebar";
 @import "svg-ui";

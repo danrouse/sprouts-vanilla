@@ -86,18 +86,18 @@ TreeNode.prototype = {
 
         style.innerHTML = '' +
             '.sprouts__label { ' +
-                'font-family: ' + options.nodeFontFamily +
-                ';font-size: ' + options.nodeFontSize + 'px' +
-                ';fill: ' + options.nodeFontColor +
-                ';font-weight: ' + (options.nodeFontBold ? 'bold' : 'normal') +
-                ';font-style: ' + (options.nodeFontItalic ? 'italic' : 'normal') +
+                'font-family: ' + options.fonts.node['font-family'] +
+                ';font-size: ' + options.fonts.node['font-size'] + 'pt' +
+                ';fill: ' + options.fonts.node['color'] +
+                ';font-weight: ' + (options.fonts.node['bold'] ? 'bold' : 'normal') +
+                ';font-style: ' + (options.fonts.node['italic'] ? 'italic' : 'normal') +
             '} ' +
             '.sprouts__head { ' +
-                'font-family: ' + options.headFontFamily +
-                ';font-size: ' + options.headFontSize + 'px' +
-                ';fill: ' + options.headFontColor +
-                ';font-weight: ' + (options.headFontBold ? 'bold' : 'normal') +
-                ';font-style: ' + (options.headFontItalic ? 'italic' : 'normal') +
+                'font-family: ' + options.fonts.head['font-family'] +
+                ';font-size: ' + options.fonts.head['font-size'] + 'pt' +
+                ';fill: ' + options.fonts.head['color'] +
+                ';font-weight: ' + (options.fonts.head['bold'] ? 'bold' : 'normal') +
+                ';font-style: ' + (options.fonts.head['italic'] ? 'italic' : 'normal') +
             '} ' +
             '.sprouts__line { ' +
                 'stroke: ' + options.lineColor +

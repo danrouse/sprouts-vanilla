@@ -8,25 +8,12 @@
 
 Usage
 -----
- - A live version of sprouts is online at [http://rouse.house/sprouts/](http://rouse.house/sprouts/).
+ - A live version of sprouts is online at [http://rouse.house/sprouts/](http://rouse.house/sprouts/)
 
 
-Roadmap
--------
- - **Major features**
- 	- movement
- 	- interactive drawing
- 	- merge (bottom-up drawing)
-
- - **Minor features**
- 	- lines between head and node label (genericize head connectors with triangles)
- 	- IPA keyboard
-
- - **Tech/UI**
- 	- support webfonts and arbitrary local fonts (redo fonts menu)
- 	- better garbage collection
- 	- svg icon system
- 	- tooltips (icon tooltips?)
+Bugs
+----
+ - [Issues with the software can be reported here](https://github.com/kremonte/sprouts/issues)
 
 
 Contributing

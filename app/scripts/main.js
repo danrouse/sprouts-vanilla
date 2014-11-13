@@ -3,17 +3,22 @@
 (function() {
     // default tree options
     var defaults = {
-        nodeFontFamily: 'Arial',
-        nodeFontSize: 18,
-        nodeFontColor: '#2e1a06',
-        nodeFontBold: true,
-        nodeFontItalic: false,
-
-        headFontFamily: 'Courier New',
-        headFontSize: 14,
-        headFontColor: '#9b1d00',
-        headFontBold: false,
-        headFontItalic: false,
+        fonts: {
+            node: {
+                'font-family': 'Arial',
+                'font-size': 18,
+                'color': '#2e1a06',
+                'bold': true,
+                'italic': false
+            },
+            head: {
+                'font-family': 'Courier New',
+                'font-size': 14,
+                'color': '#9b1d00',
+                'bold': false,
+                'italic': false
+            }
+        },
 
         nodeSpacingY: 50,
         nodeSpacingX: 12,
@@ -25,9 +30,11 @@
     // make a basic tree
     var tree = new Tree('[VP [VP [V Draw][NP ^syntax trees]][PP [P with][NP Sprouts]]]', defaults);
 
-    // post initial settings to DOM
+    // populate settings elements with defaults
     var elem;
     for(var key in defaults) {
+        if(key === 'fonts') { continue; }
+
         elem = document.getElementsByName('settings_' + key);
         if(elem.length) {
             if(elem[0].type === 'checkbox') {
@@ -40,6 +47,111 @@
         } else {
             console.log('no DOM element for setting', key);
         }
+    }
+
+
+    // font selectors
+    var fonts = ['Arial', 'Times New Roman', 'Impact', 'Garamond', 'Comic Sans MS', 'Courier New'];
+    var fontSelectors = document.getElementsByClassName('font-selector'),
+        fontListTemplate = document.createElement('ul'),
+        i, j;
+
+    // populate template
+    for(i in fonts) {
+        var li = document.createElement('li');
+        li.setAttribute('style', 'font-family: ' + fonts[i]);
+        li.innerHTML = fonts[i];
+        fontListTemplate.appendChild(li);
+    }
+
+    // update preview and tree
+    var updateFont = function(fontPreview, destFont, attrs) {
+        // copy attrs to destination font
+        for(var key in attrs) {
+            destFont[key] = attrs[key];
+        }
+
+        // update preview
+        var style = 'font-family: ' + destFont['font-family'] +
+            ';font-size: ' + destFont['font-size'] + 'pt' +
+            ';color: ' + destFont['color'] +
+            ';font-weight: ' + (destFont['bold'] ? 'bold' : 'normal') +
+            ';font-style: ' + (destFont['italic'] ? 'italic' : 'normal');
+        fontPreview.style.cssText = style;
+        fontPreview.innerHTML = destFont['font-family'] + ' ' +
+            destFont['font-size'] + 'pt' +
+            (destFont['bold'] ? ' bold' : '') +
+            (destFont['italic'] ? ' italic' : '');
+
+        // redraw tree if changed
+        tree.draw();
+    }
+
+    for(i=0; i<fontSelectors.length; i++) {
+        var selector = fontSelectors[i],
+            destFont = tree.options.fonts[selector.dataset.font],
+            fontPreview = selector.getElementsByClassName('font-preview')[0],
+            fontList = selector.insertBefore(fontListTemplate.cloneNode(true), fontPreview);
+
+        // update font family on list item click
+        fontList.onclick = function() {
+            if(event.target.nodeName === 'LI') {
+                updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                    tree.options.fonts[this.parentNode.dataset.font],
+                    { 'font-family': event.target.innerHTML });
+            }
+            // hide
+            this.className = '';
+        };
+
+        // show font list when preview is clicked
+        fontPreview.onclick = function() {
+            this.previousSibling.className = 'visible';
+        };
+
+        // hide the font list if we click out anywhere else
+        document.onclick = function(e) {
+            // if(fontListVisible &&
+            //    event.target.parentNode !== fontList &&
+            //    event.target.parentNode !== fontPreview &&
+            //    event.target.parentNode !== selector) {
+            //     // this is conflicting with multiple elements
+            //     // (multiple document.onclick functions hiding each other)
+
+            //     // fontList.className = '';
+            //     // console.log('hiding', event.target.parentNode, 'selector', selector);
+            //     // fontListVisible = false;
+            // }
+        }
+
+        // simple event handlers for the chirrens
+        selector.children['font-size'].oninput = function() {
+            updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                tree.options.fonts[this.parentNode.dataset.font],
+                { 'font-size': this.value });
+        };
+        selector.children['color'].onchange = function() {
+            updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                tree.options.fonts[this.parentNode.dataset.font],
+                { 'color': this.value });
+        };
+        selector.children['bold'].onchange = function() {
+            updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                tree.options.fonts[this.parentNode.dataset.font],
+                { 'bold': this.checked });
+        };
+        selector.children['italic'].onchange = function() {
+            updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                tree.options.fonts[this.parentNode.dataset.font],
+                { 'italic': this.checked });
+        };
+
+        // initialize
+        selector.children['font-size'].value = destFont['font-size'];
+        selector.children['color'].value = destFont['color'];
+        selector.children['bold'].checked = destFont['bold'];
+        selector.children['italic'].checked = destFont['italic'];
+        updateFont(fontPreview, destFont);
     }
 
     // settings handlers

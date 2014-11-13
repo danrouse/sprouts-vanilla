@@ -23,84 +23,30 @@
         </header>
 
         <section class="toolbar">
-            <ul class="toolbar-buttons buttons">
-                <li class="button" data-action="saveSVG">&rarr; Save as SVG</li>
-                <li class="button" data-action="savePNG">&rarr; Save as PNG</li>
-            </ul>
+            <button data-action="saveSVG">&rarr; Save as SVG</button>
+            <button data-action="savePNG">&rarr; Save as PNG</button>
         </section>
         
         <aside class="sidebar">
-            <strong>Settings</strong>
+            <h2>Settings</h2>
 
-            <ul class="settings">
-                <li class="heading">Primary font</li>
-                <li>
-                    <label for="settings_nodeFontFamily">Family</label>
-                    <select name="settings_nodeFontFamily" class="setting">
-                        <option value="Times New Roman" class="font-option">Times New Roman</option>
-                        <option value="Arial" class="font-option">Arial</option>
-                        <option value="Impact" class="font-option">Impact</option>
-                        <option value="Comic Sans MS" class="font-option">Comic Sans</option>
-                        <option value="Segoe UI" class="font-option">Segoe UI</option>
-                        <option value="Courier New" class="font-option">Courier New</option>
-                    </select>
-                </li>
-                <li>
-                    <label for="settings_nodeFontSize">Size</label>
-                    <input name="settings_nodeFontSize" type="number" class="setting">
-                </li>
-                <li>
-                    <label for="settings_nodeFontColor">Color</label>
-                    <input name="settings_nodeFontColor" type="color" class="setting" value="#83d935">
-                </li>
-                <li>
-                    <ul class="buttons">
-                        <li>
-                            <label for="settings_nodeFontBold" class="button-label">Bold</label>
-                            <input type="checkbox" name="settings_nodeFontBold" class="setting">
-                        </li>
-                        <li>
-                            <label for="settings_nodeFontItalic" class="button-label">Italic</label>
-                            <input type="checkbox" name="settings_nodeFontItalic" class="setting">
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+            <h3>Node font</h3>
+            <div class="font-selector" data-font="node">
+                <p class="font-preview">Font preview</p>
+                <input type="checkbox" name="bold"><label for="bold">Bold</label>
+                <input type="checkbox" name="italic"><label for="italic">Italic</label><br>
+                <label for="font-size">Size</label><input type="range" name="font-size" min="5" max="60" step="1"><br>
+                <label for="color">Color</label><input type="color" name="color">
+            </div>
 
-            <ul class="settings">
-                <li class="heading">Lexical font</li>
-                <li>
-                    <label for="settings_headFontFamily">Family</label>
-                    <select name="settings_headFontFamily" class="setting">
-                        <option value="Times New Roman" class="font-option">Times New Roman</option>
-                        <option value="Arial" class="font-option">Arial</option>
-                        <option value="Impact" class="font-option">Impact</option>
-                        <option value="Comic Sans MS" class="font-option">Comic Sans</option>
-                        <option value="Segoe UI" class="font-option">Segoe UI</option>
-                        <option value="Courier New" class="font-option">Courier New</option>
-                    </select>
-                </li>
-                <li>
-                    <label for="settings_headFontSize">Size</label>
-                    <input name="settings_headFontSize" type="number" class="setting">
-                </li>
-                <li>
-                    <label for="settings_headFontColor">Color</label>
-                    <input name="settings_headFontColor" type="color" class="setting">
-                </li>
-                <li>
-                    <ul class="buttons">
-                        <li>
-                            <label for="settings_headFontBold" class="button-label">Bold</label>
-                            <input type="checkbox" name="settings_headFontBold" class="setting">
-                        </li>
-                        <li>
-                            <label for="settings_headFontItalic" class="button-label">Italic</label>
-                            <input type="checkbox" name="settings_headFontItalic" class="setting">
-                        </li>
-                    </ul>
-                </li>
-            </ul>
+            <h3>Head font</h3>
+            <div class="font-selector" data-font="head">
+                <p class="font-preview">Font preview</p>
+                <input type="checkbox" name="bold"><label for="bold">Bold</label>
+                <input type="checkbox" name="italic"><label for="italic">Italic</label><br>
+                <label for="font-size">Size</label><input type="range" name="font-size" min="5" max="60" step="1"><br>
+                <label for="color">Color</label><input type="color" name="color">
+            </div>
 
             <ul class="settings">
                 <li class="heading">Tree settings</li>
