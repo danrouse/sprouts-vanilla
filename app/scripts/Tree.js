@@ -82,7 +82,7 @@ Tree.prototype = {
 
         // replace the element in the DOM
         if(this.treeElement.children.length) {
-            this.treeElement.firstChild.remove();
+            this.treeElement.removeChild(this.treeElement.firstChild);
         }
         this.treeElement.appendChild(svg);
 
@@ -91,7 +91,7 @@ Tree.prototype = {
         svg.onclick = function(event) {
             // remove existing selection class
             if(that.selectedNode) {
-                that.selectedNode.svg.classList.remove('selected');
+                that.selectedNode.svg._attrs({'class': ''});
             }
 
             // find first svg parent of click event target
@@ -101,7 +101,7 @@ Tree.prototype = {
             }
             
             // select target node
-            target.classList.add('selected');
+            target._attrs({'class': 'selected'});
             that.selectedNode = target.treeNode;
 
             // update selected text area

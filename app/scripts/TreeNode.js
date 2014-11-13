@@ -280,17 +280,19 @@ TreeNode.prototype = {
         }        
 
         // get total width (label + children) and center label
-        var bbox = svg.getBBox();
+        var bbox = svg.getBBox(),
+            width = bbox.width,
+            height = bbox.height;
         label._attrs({
             'text-anchor': 'middle',
-            'x': bbox.width / 2,
+            'x': width / 2,
             'y': labelY * 0.8
         });
 
         // point lines towards center
         for(i in lines) {
             lines[i]._attrs({
-                'x2': bbox.width / 2,
+                'x2': width / 2,
                 'y2': labelY + options.linePadding
             });
         }
@@ -302,13 +304,13 @@ TreeNode.prototype = {
             });
 
             // recalc bbox height for moved text
-            bbox.height = svg.getBBox().height;
+            height = svg.getBBox().height;
         }
 
         // explicitly state final size
         svg._attrs({
-            width: bbox.width,
-            height: bbox.height
+            width: width,
+            height: height
         });
 
         // cyclical reference for accessing from the DOM
