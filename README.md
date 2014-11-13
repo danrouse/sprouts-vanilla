@@ -22,6 +22,7 @@ todo
  	- use embedded CSS instead of SVG attributes where possible
  	- support webfonts and arbitrary local fonts (redo fonts menu)
  	- better garbage collection
+ 	- **haven't tested a thing outside of chrome**
 
 
 contributing

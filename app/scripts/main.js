@@ -5,19 +5,21 @@
     var defaults = {
         nodeFontFamily: 'Arial',
         nodeFontSize: 16,
-        nodeFontColor: '#9b1d00',
+        nodeFontColor: '#83d935',
         nodeFontBold: true,
         nodeFontItalic: false,
+
         headFontFamily: 'Times New Roman',
         headFontSize: 10,
-        headFontColor: '#2e1a06',
+        headFontColor: '#9b1d00',
         headFontBold: false,
         headFontItalic: true,
+        
         nodeSpacingY: 50,
         nodeSpacingX: 12,
         linePadding: 2,
         lineWidth: 2,
-        lineColor: '#83d935'
+        lineColor: '#2e1a06'
     };
 
     // make a basic tree
@@ -54,6 +56,24 @@
     var settingElems = document.getElementsByClassName('setting');
     for(var i=0; i<settingElems.length; i++) {
         settingElems[i].onchange = changeSetting.bind(settingElems[i]);
+    }
+
+    // action buttons
+    var actions = {
+        savePNG: function() {
+            var png = tree.root.toPNG();
+            window.open(png, 'sprouts PNG', 'width=' + tree.root.svg.offsetWidth +
+                ',height=' + tree.root.svg.offsetHeight);
+        }
+    };
+    function handleAction(event) {
+        // get target action
+        var action = actions[event.target.dataset.action];
+        if(action) { action(event); }
+    }
+    var buttonElems = document.getElementsByClassName('button');
+    for(var i=0; i<buttonElems.length; i++) {
+        buttonElems[i].onclick = handleAction;
     }
 
     // databind the tree contents text input

@@ -15,7 +15,7 @@ var Tree = function(contents, initialOptions) {
      *
      * @property options {Object}
      **/
-    this.options = initialOptions || {};
+    this.options = Object.create(initialOptions) || {};
 
     /**
      * DOM element containing the tree SVG
@@ -31,6 +31,11 @@ var Tree = function(contents, initialOptions) {
      **/
     this.textElement = document.getElementById('sprouts-text');
 
+    /**
+     * root node
+     *
+     * @property root {TreeNode}
+     **/
     /**
      * current selection
      *
@@ -57,6 +62,16 @@ Tree.prototype = {
     },
 
     /**
+     * generates PNG of the entire tree
+     *
+     * @method toPNG
+     * @return image {String} dataURL image/png
+     **/
+    toPNG: function() {
+        return this.root.toPNG();
+    },
+
+    /**
      * generates SVG and updates the DOM
      *
      * @method draw
@@ -74,6 +89,11 @@ Tree.prototype = {
         // bind UI events
         var that = this;
         svg.onclick = function(event) {
+            // remove existing selection class
+            if(that.selectedNode) {
+                that.selectedNode.svg.classList.remove('selected');
+            }
+
             // find first svg parent of click event target
             var target = event.target;
             while(target.nodeName !== 'svg') {
@@ -81,6 +101,7 @@ Tree.prototype = {
             }
             
             // select target node
+            target.classList.add('selected');
             that.selectedNode = target.treeNode;
 
             // update selected text area

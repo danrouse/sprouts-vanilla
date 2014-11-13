@@ -73,6 +73,41 @@ TreeNode.prototype = {
     },
 
     /**
+     * generates CSS from display options
+     * for SVG embedding
+     *
+     * @method generateCSS()
+     * @return styleElem {Element}
+     **/
+    generateCSS: function() {
+        var style = document.createElement('style'),
+            options = this.options;
+        style.setAttribute('type', 'text/css');
+
+        style.innerHTML = '' +
+            '.sprouts__label { ' +
+                'font-family: ' + options.nodeFontFamily +
+                ';font-size: ' + options.nodeFontSize + 'px' +
+                ';fill: ' + options.nodeFontColor +
+                ';font-weight: ' + (options.nodeFontBold ? 'bold' : 'normal') +
+                ';font-style: ' + (options.nodeFontItalic ? 'italic' : 'normal') +
+            '} ' +
+            '.sprouts__head { ' +
+                'font-family: ' + options.headFontFamily +
+                ';font-size: ' + options.headFontSize + 'px' +
+                ';fill: ' + options.headFontColor +
+                ';font-weight: ' + (options.headFontBold ? 'bold' : 'normal') +
+                ';font-style: ' + (options.headFontItalic ? 'italic' : 'normal') +
+            '} ' +
+            '.sprouts__line { ' +
+                'stroke: ' + options.lineColor +
+                ';stroke-width: ' + options.lineWidth +
+            '}';
+
+        return style;
+    },
+
+    /**
      * parses bracketed text into TreeNode objects
      * with this object's options
      *
@@ -175,6 +210,7 @@ TreeNode.prototype = {
      **/
     toSVG: function() {
         var svg = _svgelem('svg'),
+            options = this.options,
             lines = [],
             elemWidth = 0,
             label, head, children,
@@ -184,15 +220,13 @@ TreeNode.prototype = {
         // the SVG is moved into its parent element when added
         document.body.appendChild(svg);
 
+        // append CSS to the root
+        if(!this.parent) {
+            svg.appendChild(this.generateCSS());
+        }
+
         // add main label
-        label = _svgelem('text', {
-            'class': 'sprouts__label',
-            'font-family': this.options.nodeFontFamily,
-            'font-size': this.options.nodeFontSize,
-            'fill': this.options.nodeFontColor,
-            'font-weight': this.options.nodeFontBold ? 'bold' : 'normal',
-            'font-style': this.options.nodeFontItalic ? 'italic' : 'normal'
-        });
+        label = _svgelem('text', { 'class': 'sprouts__label' });
         label.appendChild(document.createTextNode(this.type));
         svg.appendChild(label);
 
@@ -213,17 +247,16 @@ TreeNode.prototype = {
                 // Position the child adjacent to any existing siblings
                 child._attrs({
                     'x': elemWidth,
-                    'y': this.options.nodeSpacingY
+                    'y': options.nodeSpacingY
                 });
 
                 // create first point of connecting line at top center of child
                 var line = _svgelem('line');
                 line._attrs({
                     'class': 'sprouts__line',
-                    'stroke': this.options.lineColor,
-                    'stroke-width': this.options.lineWidth,
+
                     'x1': elemWidth + (childWidth / 2),
-                    'y1': this.options.nodeSpacingY - this.options.linePadding
+                    'y1': options.nodeSpacingY - options.linePadding
                 });
                 lines.push(line);
                 svg.appendChild(line);
@@ -236,19 +269,12 @@ TreeNode.prototype = {
                 }
 
                 // increase total width, add x-padding if not the last item
-                elemWidth += childWidth + (i < this.children.length - 1 ? this.options.nodeSpacingX : 0);
+                elemWidth += childWidth + (i < this.children.length - 1 ? options.nodeSpacingX : 0);
             }
 
         } else if(this.head.length) {
             // no children, but there is a lexical head to display
-            head = _svgelem('text', {
-                'class': 'sprouts__head',
-                'font-family': this.options.headFontFamily,
-                'font-size': this.options.headFontSize,
-                'fill': this.options.headFontColor,
-                'font-weight': this.options.headFontBold ? 'bold' : 'normal',
-                'font-style': this.options.headFontItalic ? 'italic' : 'normal'
-            });
+            head = _svgelem('text', { 'class': 'sprouts__head' });
             head.appendChild(document.createTextNode( this.head ));
             svg.appendChild(head);
         }        
@@ -265,7 +291,7 @@ TreeNode.prototype = {
         for(i in lines) {
             lines[i]._attrs({
                 'x2': bbox.width / 2,
-                'y2': labelY + this.options.linePadding
+                'y2': labelY + options.linePadding
             });
         }
 
@@ -300,11 +326,29 @@ TreeNode.prototype = {
      * create a PNG image based on a generated SVG
      *
      * @method toPNG
+     * @return image {String} dataURL image/png
      **/
     toPNG: function() {
         if(!this.svg) {
             this.toSVG();
         }
-        var svg = this.svg;
+
+        var svg = this.svg,
+            img = new Image();
+
+        // make image from svg
+        //svg._attrs({ xmlns: 'http://www.w3.org/2000/svg' });
+        var xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + svg.offsetWidth +
+            '" height="' + svg.offsetHeight + '">' + svg.innerHTML + '</svg>';
+        img.src = 'data:image/svg+xml,' + encodeURIComponent(xml);
+
+        // draw image to a canvas
+        var canvas = document.createElement('canvas');
+        canvas.width = svg.offsetWidth;
+        canvas.height = svg.offsetHeight;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+
+        return canvas.toDataURL('image/png');
     }
 };
