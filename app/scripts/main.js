@@ -4,17 +4,17 @@
     // default tree options
     var defaults = {
         nodeFontFamily: 'Arial',
-        nodeFontSize: 16,
-        nodeFontColor: '#83d935',
+        nodeFontSize: 18,
+        nodeFontColor: '#2e1a06',
         nodeFontBold: true,
         nodeFontItalic: false,
 
-        headFontFamily: 'Times New Roman',
-        headFontSize: 10,
+        headFontFamily: 'Courier New',
+        headFontSize: 14,
         headFontColor: '#9b1d00',
         headFontBold: false,
-        headFontItalic: true,
-        
+        headFontItalic: false,
+
         nodeSpacingY: 50,
         nodeSpacingX: 12,
         linePadding: 2,
