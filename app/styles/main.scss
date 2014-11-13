@@ -1,4 +1,5 @@
 @import "reset";
+
 $tan: #cfba95;
 $white: #efe8dc;
 $green: #83d935;
@@ -10,28 +11,16 @@ body {
     background-color: $white;
     color: $brown;
 
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
 
     box-sizing: border-box;
 }
 
-// .container {
-//     display: flex;
-//     flex-direction: column;
-//     flex-wrap: wrap;
-//     //justify-content: center;
-//     align-items: stretch;
-//     //align-content: space-between;
-
-//     width: 100vw;
-//     height: 100vh;
-// }
-
 .header {
     height: 20%;
-    padding: 1em;
     border-top: 8px solid $brown;
     border-bottom: 8px solid $brown;
+    padding: 1em;
 
     background-color: $blue;
 }
@@ -46,21 +35,85 @@ body {
     background-color: $green;
 }
 
-.main {
+.sidebar {
+    float: left;
     height: 70%;
+    margin-right: 1em;
+    border-right: 4px solid $brown;
+    padding: 1em;
+    background-color: $tan;
     overflow-y: auto;
 }
-    .sidebar {
-        float: left;
-        width: 20%;
-        height: 100%;
-        margin-right: 1em;
-        border-right: 4px solid $brown;
-        background-color: $tan;
+    .settings {
+        border: 2px solid $brown;
+        margin-bottom: 1rem;
+        font-size: 80%;
+        list-style: none;
+
+        .heading {
+            padding: 0.25rem 0.5rem;
+            border-bottom: 2px solid $brown;
+            font-weight: bold;
+            background-color: $blue;
+            text-align: left;
+        }
+
+        > li {
+            display: flex;
+            justify-content: space-between;
+
+            > label {
+                // position: absolute;
+                // top: 0.5em;
+                // left: 0.5em;
+                min-width: 20%;
+                padding: 0.5em;
+            }
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="color"] {
+            height: 2em;
+            flex-grow: 2;
+            text-align: right;
+            //width: 80%;
+        }
+
+        .buttons {
+            text-align: center;
+            flex-grow: 3;
+        }
     }
+        
+
+.main {
+    height: 70%;
+    padding: 1em;
+    overflow-y: auto;
+}
 
 .footer {
+    clear: both;
     height: 5%;
     border-top: 4px solid $brown;
-    background-color: $tan;   
+    background-color: $tan;
 }
+    .tree-contents {
+        width: 100%;
+    }
+
+// form styles
+input, textarea {
+    background-color: $white;
+    border: 2px solid $tan;
+}
+
+// list of buttons
+.buttons {
+    list-style: none;
+
+    li {
+        display: inline-block;
+    }
+}
+

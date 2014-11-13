@@ -23,17 +23,98 @@
         </header>
 
         <section class="toolbar">
+            <ul class="toolbar-buttons buttons">
+                <li>new tree</li>
+                <li>save tree</li>
+            </ul>
         </section>
+        
+        <aside class="sidebar">
+            <strong>Settings</strong>
+
+            <ul class="settings">
+                <li class="heading">Primary Font</li>
+                <li>
+                    <label for="settings_nodeFontFamily">Family</label>
+                    <input name="settings_nodeFontFamily" type="text" class="setting">
+                </li>
+                <li>
+                    <label for="settings_nodeFontSize">Size</label>
+                    <input name="settings_nodeFontSize" type="number" class="setting">
+                </li>
+                <li>
+                    <label for="settings_nodeFontColor">Color</label>
+                    <input name="settings_nodeFontColor" type="color" class="setting" value="#83d935">
+                </li>
+                <li>
+                    <ul class="buttons">
+                        <li>
+                            <label for="settings_nodeFontBold" class="button-label">Bold</label>
+                            <input type="checkbox" name="settings_nodeFontBold" checked>
+                        </li>
+                        <li>
+                            <label for="settings_nodeFontItalic" class="button-label">Italic</label>
+                            <input type="checkbox" name="settings_nodeFontItalic">
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="settings">
+                <li class="heading">Lexical Font</li>
+                <li>
+                    <label for="settings_headFontFamily">Family</label>
+                    <input name="settings_headFontFamily" type="text" class="setting">
+                </li>
+                <li>
+                    <label for="settings_headFontSize">Size</label>
+                    <input name="settings_headFontSize" type="number" class="setting">
+                </li>
+                <li>
+                    <label for="settings_headFontColor">Color</label>
+                    <input name="settings_headFontColor" type="color" class="setting">
+                </li>
+                <li>
+                    <ul class="buttons">
+                        <li>
+                            <label for="settings_headFontBold" class="button-label">Bold</label>
+                            <input type="checkbox" name="settings_headFontBold">
+                        </li>
+                        <li>
+                            <label for="settings_headFontItalic" class="button-label">Italic</label>
+                            <input type="checkbox" name="settings_headFontItalic" checked>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <ul class="settings">
+                <li>
+                    <label for="settings_nodePaddingY">Vertical spacing</label>
+                    <input name="settings_nodePaddingY" type="number" class="setting" value="40">
+                </li>
+                <li>
+                    <label for="settings_nodePaddingX">Horizontal spacing</label>
+                    <input name="settings_nodePaddingX" type="number" class="setting" value="10">
+                </li>
+                <li>
+                    <label for="settings_lineWidth">Line width</label>
+                    <input name="settings_lineWidth" type="number" class="setting" value="2">
+                </li>
+                <li>
+                    <label for="settings_lineColor">Line color</label>
+                    <input name="settings_lineColor" type="color" class="setting" value="#83d935">
+                </li>
+            </ul>
+        </aside>
 
         <section class="main" id="main">
-            <aside class="sidebar">
-            </aside>
-
-            <svg id="syntax_tree">
-            </svg>
+            <div id="sprouts-tree"></div>
         </section>
 
         <footer class="footer">
+            <label for="sproutsText">Tree Contents</label>
+            <input type="text" name="sproutsText" class="tree-contents" id="sprouts-text">
         </footer>
 
         <!-- build:js scripts/vendor.js -->
