@@ -14,7 +14,9 @@ usage
 todo
 ----
  - use embedded CSS instead of SVG attributes where possible
- - support webfonts and arbitrary local fonts
+ - support webfonts and arbitrary local fonts (fonts dropdown?)
+ - yuidoc documentation
+ - select embedded items
 
 contributing
 ------------

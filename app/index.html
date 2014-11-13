@@ -33,7 +33,7 @@
             <strong>Settings</strong>
 
             <ul class="settings">
-                <li class="heading">Primary Font</li>
+                <li class="heading">Primary font</li>
                 <li>
                     <label for="settings_nodeFontFamily">Family</label>
                     <select name="settings_nodeFontFamily" class="setting">
@@ -67,7 +67,7 @@
             </ul>
 
             <ul class="settings">
-                <li class="heading">Lexical Font</li>
+                <li class="heading">Lexical font</li>
                 <li>
                     <label for="settings_headFontFamily">Family</label>
                     <select name="settings_headFontFamily" class="setting">
@@ -101,6 +101,7 @@
             </ul>
 
             <ul class="settings">
+                <li class="heading">Tree settings</li>
                 <li>
                     <label for="settings_nodeSpacingY">Child spacing (vertical)</label>
                     <input name="settings_nodeSpacingY" type="number" class="setting">
@@ -125,12 +126,14 @@
         </aside>
 
         <section class="main" id="main">
-            <div id="sprouts-tree"></div>
+            <!--label for="sproutsText">Tree Contents</label-->
+            <input type="text" class="sprouts-text" id="sprouts-text">
+
+            <div class="sprouts-tree" id="sprouts-tree"></div>
         </section>
 
         <footer class="footer">
-            <label for="sproutsText">Tree Contents</label>
-            <input type="text" name="sproutsText" class="tree-contents" id="sprouts-text">
+
         </footer>
 
         <!-- build:js scripts/vendor.js -->
