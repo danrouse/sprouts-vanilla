@@ -5,6 +5,7 @@
  *
  * @class TreeNode
  * @constructor
+ * @param options {Object} display options
  **/
 var TreeNode = function(options) {
     /**
