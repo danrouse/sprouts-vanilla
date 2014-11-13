@@ -5,6 +5,7 @@ $white: #efe8dc;
 $green: #83d935;
 $blue: #bcd1ff;
 $brown: #2e1a06;
+$red: #9b1d00;
 
 html, body { height: 100%; }
 body {
@@ -32,7 +33,24 @@ body {
 .toolbar {
     height: 5%;
     border-bottom: 4px solid $brown;
-    background-color: $green;
+    background-color: lighten($blue, 5%);
+
+    .buttons, .button {
+        height: 100%;
+    }
+    .button {
+        border-left: 4px solid $brown;
+        border-right: 4px solid $brown;
+        padding: 0.25em 1em;
+
+        &:first-child {
+            border-left: 0;
+        }
+
+        &:hover {
+            background-color: $red;
+        }
+    }
 }
 
 .sidebar {
@@ -117,12 +135,19 @@ body {
     height: 5%;
     border-top: 4px solid $brown;
     background-color: $tan;
+    font-size: 80%;
+    padding: .25rem 1rem;
 }
 
 // form styles
 input, textarea, select {
     background-color: $white;
     border: 2px solid $tan;
+}
+
+// links
+a {
+    color: $red;
 }
 
 // list of buttons
@@ -133,5 +158,10 @@ input, textarea, select {
         display: inline-block;
     }
 }
+    .button {
+        &:hover {
+            cursor: pointer;
+        }
+    }
 
 @import "svg-ui";

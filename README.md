@@ -17,6 +17,7 @@ todo
  	- movement
  	- interactive drawing
  	- merge (bottom-up drawing)
+ 	- triangles
 
  - **tech**
  	- use embedded CSS instead of SVG attributes where possible

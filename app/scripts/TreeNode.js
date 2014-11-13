@@ -123,7 +123,6 @@ TreeNode.prototype = {
             trackPhrase = true;
 
         for(var i=0; i<text.length; i++) {
-
             // make a new phrase if necessary
             if(trackPhrase && currentPhrase.length &&
                (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
@@ -152,21 +151,20 @@ TreeNode.prototype = {
                     currentObject = currentObject.parent;
                 }
 
-            } else if(text[i] === ' ') {
+            } else if(trackPhrase && text[i] === ' ') {
                 // start tracking head after space
                 trackPhrase = false;
 
             } else if(trackPhrase) {
-
                 // add to phrase if we're tracking and didn't just make one
                 currentPhrase = currentPhrase + text[i];
-            } else {
 
+            } else {
                 currentHead = currentHead + text[i];
             }
 
-            currentPhrase = currentPhrase.trim();
-            currentHead = currentHead.trim();
+            // currentPhrase = currentPhrase.trim();
+            // currentHead = currentHead.trim();
         }
 
         // ascend back up if we need to

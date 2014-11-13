@@ -23,7 +23,7 @@
     };
 
     // make a basic tree
-    var tree = new Tree('[XP [YP [ZP [Z foo]]] [WP [FP [XX [X bar]] [AF]]] [WP] [WP]]', defaults);
+    var tree = new Tree('[VP [VP [V Draw][NP syntax trees]][PP [P with][NP Sprouts]]]', defaults);
 
     // post initial settings to DOM
     var elem;

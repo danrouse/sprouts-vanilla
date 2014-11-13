@@ -2,7 +2,15 @@ svg.selected {
 	> .sprouts__label {
 		fill: $green;
 		stroke: $brown;
-		stroke-width: 2px;
+		stroke-width: 1px;
 		text-shadow: 0 0 .5em $blue;
 	}
+}
+
+.sprouts__label:hover,
+.sprouts__head:hover {
+	cursor: pointer;
+	fill: $blue;
+	stroke: darken($blue, 10%);
+	stroke-width: 1px;
 }
