@@ -19,8 +19,7 @@ Roadmap
  	- merge (bottom-up drawing)
 
  - **Minor features**
- 	- triangles
- 	- lines between head and node label
+ 	- lines between head and node label (genericize head connectors with triangles)
  	- IPA keyboard
 
  - **Tech/UI**

@@ -102,6 +102,11 @@ TreeNode.prototype = {
             '.sprouts__line { ' +
                 'stroke: ' + options.lineColor +
                 ';stroke-width: ' + options.lineWidth +
+            '} ' +
+            '.sprouts__triangle { ' +
+                'stroke: ' + options.lineColor +
+                ';stroke-width: ' + options.lineWidth +
+                ';fill: none' +
             '}';
 
         return style;
@@ -126,6 +131,9 @@ TreeNode.prototype = {
             // make a new phrase if necessary
             if(trackPhrase && currentPhrase.length &&
                (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
+                currentPhrase = currentPhrase.trim();
+                currentHead = currentHead.trim();
+
                 // create root if we need to
                 var newObject = currentObject ?
                         currentObject.addChild({ type: currentPhrase, head: currentHead }) :
@@ -274,8 +282,27 @@ TreeNode.prototype = {
         } else if(this.head.length) {
             // no children, but there is a lexical head to display
             head = _svgelem('text', { 'class': 'sprouts__head' });
-            head.appendChild(document.createTextNode( this.head ));
+
+            var hasTriangle = this.head[0] === '^';
+
+            head.appendChild(document.createTextNode(hasTriangle ? this.head.substr(1) : this.head));
             svg.appendChild(head);
+
+            var headBBox = head.getBBox();
+
+            // lazy linguist triangles
+            if(hasTriangle) {
+                var triangle = _svgelem('polygon', { 'class': 'sprouts__triangle' });
+                var points = [
+                    '0,' + (labelY * 1.3),//+ headBBox.height),
+                    headBBox.width + ',' + (labelY * 1.3),// + headBBox.height),
+                    (headBBox.width / 2) + ',' + (labelY)];
+
+                triangle._attrs({ 'points': points.join(' ') });
+                svg.appendChild(triangle);
+            }
+
+            
         }        
 
         // get total width (label + children) and center label
@@ -299,7 +326,7 @@ TreeNode.prototype = {
         // move lexical head under label as well
         if(head) {
             head._attrs({
-                'y': (labelY * 0.8) + head.getBBox().height
+                'y': (labelY * 1) + head.getBBox().height
             });
 
             // recalc bbox height for moved text
