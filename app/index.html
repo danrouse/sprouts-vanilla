@@ -22,11 +22,6 @@
             <img class="logo" src="images/logo.svg">
         </header>
 
-        <section class="toolbar">
-            <button data-action="saveSVG">&rarr; Save as SVG</button>
-            <button data-action="savePNG">&rarr; Save as PNG</button>
-        </section>
-        
         <aside class="sidebar">
             <h2>Settings</h2>
 
@@ -47,9 +42,9 @@
                 <label for="font-size">Size</label><input type="range" name="font-size" min="5" max="60" step="1"><br>
                 <label for="color">Color</label><input type="color" name="color">
             </div>
-
+            
+            <h3>Tree settings</h3>
             <ul class="settings">
-                <li class="heading">Tree settings</li>
                 <li>
                     <label for="settings_nodeSpacingY">Child spacing (vertical)</label>
                     <input name="settings_nodeSpacingY" type="number" class="setting">
@@ -74,7 +69,11 @@
         </aside>
 
         <section class="main" id="main">
-            <!--label for="sproutsText">Tree Contents</label-->
+            <nav class="toolbar">
+                <button data-action="saveSVG">&rarr; Save as SVG</button>
+                <button data-action="savePNG">&rarr; Save as PNG</button>
+            </nav>
+            
             <input type="text" class="sprouts-text" id="sprouts-text">
 
             <div class="sprouts-tree" id="sprouts-tree"></div>

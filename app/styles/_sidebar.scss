@@ -1,22 +1,24 @@
 .sidebar {
     float: left;
-    height: 70%;
-    max-width: 25%;
+    height: 75%;
+    max-width: 50%;
     border-right: $border solid $brown;
-    background-color: $tan;
+    background-color: $white2;
     overflow-y: auto;
 
     h2 {
         display: block;
         padding: $padding;
+        background-color: $tan;
+        font-size: 1.414em;
     }
-    h3, .heading {
-        padding: $padding;
-        border-top: ($border / 2) solid $brown;
-        border-bottom: ($border / 2) solid $brown;
+    h3 {
+        padding: ($padding / 2) $padding;
+        //border-top: ($border / 2) solid $brown2;
+        //border-bottom: ($border / 2) solid $tan3;
         font-weight: bold;
-        //background-color: $blue;
-        text-align: left;
+        font-size: 1em;
+        background-color: $blue;
     }
 }
     .settings {
@@ -58,15 +60,6 @@
         position: relative;
         padding: $padding;
 
-        .font-preview {
-            margin-bottom: $padding;
-
-            &:hover {
-                background-color: $blue;
-                cursor: pointer;
-            }
-        }
-
         label {
             margin-right: $padding;
         }
@@ -92,3 +85,13 @@
                 }
             }
     }
+        .font-preview {
+            margin-bottom: $padding;
+            white-space: nowrap;
+            overflow: hidden;
+
+            &:hover {
+                background-color: $blue;
+                cursor: pointer;
+            }
+        }

@@ -198,7 +198,7 @@
         var action = actions[event.target.dataset.action];
         if(action) { action(event); }
     }
-    var buttonElems = document.getElementsByClassName('button');
+    var buttonElems = document.getElementsByTagName('button');
     for(var i=0; i<buttonElems.length; i++) {
         buttonElems[i].onclick = handleAction;
     }

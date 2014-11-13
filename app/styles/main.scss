@@ -1,8 +1,8 @@
 @import "reset";
 @import "variables";
+@import "animation";
 
-
-html, body { height: 100%; }
+html, body { height: 100%; overflow: hidden; }
 body {
     background-color: $white;
     color: $brown;
@@ -26,59 +26,35 @@ body {
     }
 
 .toolbar {
-    height: 5%;
-    border-bottom: $border solid $brown;
-    background-color: $blue2;
+    border-bottom: ($border / 2) solid $brown;
+    background-color: $tan;
 
-    .buttons, .button {
-        height: 100%;
-    }
-    .button {
-        border-left: ($border / 2) solid $brown;
+    button {
+        float: left;
+        padding: $padding;
         border-right: ($border / 2) solid $brown;
-        padding: ($padding / 2) $padding;
-        background-color: $blue;
+    }
 
-        &:first-child {
-            border-left: 0;
-        }
-
-        &:hover {
-            background-color: $green2;
-        }
+    // clearfix for floated buttons
+    &:after {
+        content: ' ';
+        display: block;
+        clear: both;
+        width: 0;
+        height: 0;
     }
 }        
 
 .main {
-    height: 70%;
+    height: 75%;
     overflow-y: auto;
 }
-    .sprouts-text {
-        width: 100%;
-        padding: $padding;
-        border: 0;
-        border-bottom: ($border / 2) solid $brown;
-        font-size: 105%;
-        letter-spacing: 1px;
-
-        background-color: $green;
-        
-        &:hover {
-            background-color: $green2;
-        }
-        &:focus {
-            background-color: $white;
-        }
-    }
-    .sprouts-tree {
-        padding: 1em;
-    }
 
 .footer {
     clear: both;
     height: 5%;
     border-top: $border solid $brown;
-    background-color: $tan;
+    background-color: $blue;
     font-size: 80%;
     padding: $padding;
 }
@@ -89,25 +65,24 @@ input, textarea, select {
     border: ($border / 2) solid $tan;
 }
 
+button {
+    border: 0;
+    background-color: $blue;
+    &:hover {
+        background-color: $blue2;
+        cursor: pointer;
+    }
+}
+
 // links
 a {
     color: $red;
 }
 
-// list of buttons
-.buttons {
-    list-style: none;
-
-    li {
-        display: inline-block;
-    }
-}
-    .button {
-        &:hover {
-            cursor: pointer;
-        }
-    }
-
+h1 { font-size: 2.827em; }
+h2 { font-size: 1.999em; }
+h3 { font-size: 1.414em; }
+h4 { font-size: 1em; }
 
 @import "sidebar";
 @import "svg-ui";

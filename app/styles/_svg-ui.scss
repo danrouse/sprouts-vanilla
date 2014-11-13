@@ -1,16 +1,38 @@
+.sprouts-text {
+    width: 100%;
+    padding: $padding;
+    border: 0;
+    border-bottom: ($border / 2) solid $brown;
+    font-size: 105%;
+    letter-spacing: 1px;
+
+    background-color: $green;
+    
+    &:hover {
+        background-color: $green2;
+    }
+    &:focus {
+        background-color: $white;
+    }
+}
+
+.sprouts-tree {
+    padding: $padding;
+}
+
 svg.selected {
 	> .sprouts__label {
-		fill: $green;
+		fill: $blue;
 		stroke: $brown;
 		stroke-width: 1px;
-		text-shadow: 0 0 .5em $blue;
 	}
 }
 
 .sprouts__label:hover,
 .sprouts__head:hover {
 	cursor: pointer;
-	fill: $blue;
-	stroke: darken($blue, 10%);
+	fill: $green;
+	stroke: darken($green, 10%);
 	stroke-width: 1px;
+	text-shadow: 0 0 $padding $green;
 }

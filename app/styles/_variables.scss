@@ -5,8 +5,11 @@ $blue: #bcd1ff;
 $brown: #2e1a06;
 $red: #9b1d00;
 
+$white2: darken($white, 5%);
 $green2: lighten($green, 10%);
 $blue2: lighten($blue, 5%);
+$tan2: lighten($tan, 5%);
+$tan3: darken($tan, 10%);
 
 $padding: 12px;
 $border: $padding / 3;
