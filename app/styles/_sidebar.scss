@@ -9,16 +9,17 @@
     h2 {
         display: block;
         padding: $padding;
-        background-color: $tan;
+        background-color: $tan3;
         font-size: 1.414em;
     }
     h3 {
         padding: ($padding / 2) $padding;
         //border-top: ($border / 2) solid $brown2;
         //border-bottom: ($border / 2) solid $tan3;
+        margin-bottom: $padding;
         font-weight: bold;
         font-size: 1em;
-        background-color: $blue;
+        background-color: $tan;
     }
 }
     .settings {
@@ -26,39 +27,25 @@
         font-size: 80%;
         list-style: none;
 
-        > li {
-            display: flex;
-            justify-content: space-between;
-
-            > label {
-                // position: absolute;
-                // top: 0.5em;
-                // left: 0.5em;
-                //min-width: 20%;
-                padding: ($padding / 2) $padding;
-                flex-grow: 1;
-            }
+        label {
+            display: inline-block;
+            padding: 0 $padding;
+            width: 70%;
         }
         input[type="text"],
         input[type="number"],
         input[type="color"],
         select {
             height: 2em;
-            flex-grow: 2;
             text-align: right;
-            //width: 40%;
-        }
-
-        .buttons {
-            text-align: center;
-            flex-grow: 1;
+            width: 30%;
         }
     }
 
     // font selectors
     .font-selector {
         position: relative;
-        padding: $padding;
+        padding: 0 $padding $padding;
 
         label {
             margin-right: $padding;
@@ -66,13 +53,21 @@
 
         // font list
         ul {
-            display: none;
+            //display: none;
             position: absolute;
             top: 0;
+            left: 0;
+            z-index: 9001;
             width: 100%;
+            border-top: ($border / 2) solid $brown;
+            border-bottom: ($border / 2) solid $brown;
+
+            clip: rect(0, 1000px, 0px, 0);
+            transition: clip 0.1s ease-out;
 
             &.visible {
                 display: block;
+                clip: rect(0, 1000px, 600px, 0);
             }
         }
             li {
@@ -86,12 +81,15 @@
             }
     }
         .font-preview {
-            margin-bottom: $padding;
+            margin: (-$padding) (-$padding) $padding (-$padding);
+            padding: $padding;
+            background-color: $blue;
+
             white-space: nowrap;
             overflow: hidden;
 
             &:hover {
-                background-color: $blue;
+                background-color: $blue2;
                 cursor: pointer;
             }
         }

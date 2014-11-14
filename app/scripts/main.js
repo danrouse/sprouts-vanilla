@@ -5,10 +5,10 @@
     var defaults = {
         fonts: {
             node: {
-                'font-family': 'Arial',
+                'font-family': 'Open Sans',
                 'font-size': 18,
                 'color': '#2e1a06',
-                'bold': true,
+                'bold': false,
                 'italic': false
             },
             head: {
@@ -22,8 +22,8 @@
 
         nodeSpacingY: 50,
         nodeSpacingX: 12,
-        linePadding: 2,
-        lineWidth: 2,
+        linePadding: 1,
+        lineWidth: 1,
         lineColor: '#2e1a06'
     };
 
@@ -51,7 +51,7 @@
 
 
     // font selectors
-    var fonts = ['Arial', 'Times New Roman', 'Impact', 'Garamond', 'Comic Sans MS', 'Courier New'];
+    var fonts = ['Open Sans', 'Arial', 'Times New Roman', 'Impact', 'Garamond', 'Comic Sans MS', 'Courier New'];
     var fontSelectors = document.getElementsByClassName('font-selector'),
         fontListTemplate = document.createElement('ul'),
         i, j;

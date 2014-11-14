@@ -1,6 +1,8 @@
+$transition: 0.15s ease-out;
+
 input,
 button,
 p,
 svg * {
-	transition: all 0.15s ease-out;
+	transition: all $transition;
 }
