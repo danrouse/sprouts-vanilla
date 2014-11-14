@@ -54,12 +54,16 @@
         overflow: hidden;
         width: 3em;
         background-color: $tan;
-        
+
         .toggle-button {
+            display: block;
             right: $padding / 2;
+            svg, use {
+                display: block;
+            }
         }
 
-        > *:not(.toggle-button) {
+        *:not(.toggle-button) {
             display: none;
         }
     }
