@@ -5,18 +5,18 @@
     var defaults = {
         fonts: {
             node: {
-                'font-family': 'Open Sans',
-                'font-size': 18,
-                'color': '#2e1a06',
-                'bold': false,
-                'italic': false
+                fontFamily: 'Open Sans',
+                fontSize: 18,
+                color: '#2e1a06',
+                bold: false,
+                italic: false
             },
             head: {
-                'font-family': 'Open Sans',
-                'font-size': 12,
-                'color': '#9b1d00',
-                'bold': false,
-                'italic': false
+                fontFamily: 'Open Sans',
+                fontSize: 12,
+                color: '#9b1d00',
+                bold: false,
+                italic: false
             }
         },
 
@@ -74,20 +74,20 @@
         }
 
         // update preview
-        var style = 'font-family: ' + destFont['font-family'] +
-            ';font-size: ' + destFont['font-size'] + 'pt' +
-            ';color: ' + destFont['color'] +
-            ';font-weight: ' + (destFont['bold'] ? 'bold' : 'normal') +
-            ';font-style: ' + (destFont['italic'] ? 'italic' : 'normal');
+        var style = 'font-family: ' + destFont.fontFamily +
+            ';font-size: ' + destFont.fontSize + 'pt' +
+            ';color: ' + destFont.color +
+            ';font-weight: ' + (destFont.bold ? 'bold' : 'normal') +
+            ';font-style: ' + (destFont.italic ? 'italic' : 'normal');
         fontPreview.style.cssText = style;
-        fontPreview.innerHTML = destFont['font-family'] + ' ' +
-            destFont['font-size'] + 'pt' +
-            (destFont['bold'] ? ' bold' : '') +
-            (destFont['italic'] ? ' italic' : '');
+        fontPreview.innerHTML = destFont.fontFamily + ' ' +
+            destFont.fontSize + 'pt' +
+            (destFont.bold ? ' bold' : '') +
+            (destFont.italic ? ' italic' : '');
 
         // redraw tree if changed
         tree.draw();
-    }
+    };
 
     for(i=0; i<fontSelectors.length; i++) {
         var selector = fontSelectors[i],
@@ -127,44 +127,44 @@
         // }
 
         // simple event handlers for the chirrens
-        selector.children['font-size'].oninput = function() {
+        selector.children.fontSize.oninput = function() {
             updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
                 tree.options.fonts[this.parentNode.dataset.font],
-                { 'font-size': this.value });
+                { fontSize: this.value });
         };
-        selector.children['color'].onchange = function() {
+        selector.children.color.onchange = function() {
             updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
                 tree.options.fonts[this.parentNode.dataset.font],
-                { 'color': this.value });
+                { color: this.value });
         };
-        selector.children['bold'].onchange = function() {
+        selector.children.bold.onchange = function() {
             updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
                 tree.options.fonts[this.parentNode.dataset.font],
-                { 'bold': this.checked });
+                { bold: this.checked });
         };
-        selector.children['italic'].onchange = function() {
+        selector.children.italic.onchange = function() {
             updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
                 tree.options.fonts[this.parentNode.dataset.font],
-                { 'italic': this.checked });
+                { italic: this.checked });
         };
 
         // initialize
-        selector.children['font-size'].value = destFont['font-size'];
-        selector.children['color'].value = destFont['color'];
-        selector.children['bold'].checked = destFont['bold'];
-        selector.children['italic'].checked = destFont['italic'];
+        selector.children.fontSize.value = destFont.fontSize;
+        selector.children.color.value = destFont.color;
+        selector.children.bold.checked = destFont.bold;
+        selector.children.italic.checked = destFont.italic;
         updateFont(fontPreview, destFont);
     }
 
     // non-font settings handlers
     function changeSetting() {
-        var value = this.value;
+        var val = this.value;
         if(this.type === 'number' || this.type === 'range') {
-            value = parseFloat(value);
+            val = parseFloat(val);
         } else if(this.type === 'checkbox') {
-            value = this.checked;
+            val = this.checked;
         }
-        tree.options[this.name.substr(9)] = value;
+        tree.options[this.name.substr(9)] = val;
         tree.draw();
     }
     var settingElems = document.getElementsByClassName('setting');
@@ -192,7 +192,7 @@
         collapsibleElems[i].onclick = toggleCollapsible.bind(collapsibleElems[i]);
     }
 
-    // action buttons
+    // button click handlers
     var actions = {
         toggleSidebar: function(event, target) {
             var sidebar = document.getElementById('sidebar');
@@ -223,7 +223,9 @@
         },
 
         startMovement: function() {
-            console.log('start movement', tree.selectedNode);
+            var target = tree.selectedNode;
+            tree.nodeToMove = target;
+            target.svg._attrs({ 'class': 'moving' });
         },
 
         saveSVG: function() {

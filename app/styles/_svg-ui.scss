@@ -33,6 +33,14 @@ svg.selected {
 		stroke-width: 1px;
 	}
 }
+svg.moving {
+    > .sprouts__label {
+        fill: $green;
+        stroke: $brown;
+        stroke-width: 1px;
+        text-shadow: 0 0 $padding $red;
+    }
+}
 
 .sprouts__label:hover,
 .sprouts__head:hover {

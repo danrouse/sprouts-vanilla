@@ -29,6 +29,14 @@ var TreeNode = function(options) {
      **/
     this.children = [];
 
+    /**
+     * reference to initial position if moved
+     *
+     * @property trace {TreeNode}
+     **/
+    this.trace = null;
+
+
     var fromString = options.fromString || '';
 
     if(fromString.length) {
@@ -79,18 +87,26 @@ TreeNode.prototype = {
      *
      * @method moveTo
      * @param targetNode {TreeNode} node to move under
+     * @param position {Number} child index to insert to
      **/
-    moveTo: function(targetNode) {
-        // copy and move to target
-        var copy = Object.create(this);
-        copy.parent = targetNode;
-        targetNode.children.splice(position, 0, copy);
+    moveTo: function(targetNode, position) {
+        // save a trace and move to target
+        var trace = Object.create(this),
+            parent = this.parent;
 
-        // clear children and replace with trace head
-        this.head = 't';
-        this.children = [];
+        // populate trace items
+        trace.parent = parent;
+        trace.head = 't';
+        trace.children = [];
 
-        return copy;
+        // add reference
+        this.trace = trace;
+
+        // swap in the tree structure
+        parent.children[parent.children.indexOf(this)] = trace;
+        targetNode.children.splice(position || 0, 0, this);
+
+        return this;
     },
 
     /**
@@ -107,18 +123,18 @@ TreeNode.prototype = {
 
         style.innerHTML = '' +
             '.sprouts__label { ' +
-                'font-family: ' + options.fonts.node['font-family'] +
-                ';font-size: ' + options.fonts.node['font-size'] + 'pt' +
-                ';fill: ' + options.fonts.node['color'] +
-                ';font-weight: ' + (options.fonts.node['bold'] ? 'bold' : 'normal') +
-                ';font-style: ' + (options.fonts.node['italic'] ? 'italic' : 'normal') +
+                'font-family: ' + options.fonts.node.fontFamily +
+                ';font-size: ' + options.fonts.node.fontSize + 'pt' +
+                ';fill: ' + options.fonts.node.color +
+                ';font-weight: ' + (options.fonts.node.bold ? 'bold' : 'normal') +
+                ';font-style: ' + (options.fonts.node.italic ? 'italic' : 'normal') +
             '} ' +
             '.sprouts__head { ' +
-                'font-family: ' + options.fonts.head['font-family'] +
-                ';font-size: ' + options.fonts.head['font-size'] + 'pt' +
-                ';fill: ' + options.fonts.head['color'] +
-                ';font-weight: ' + (options.fonts.head['bold'] ? 'bold' : 'normal') +
-                ';font-style: ' + (options.fonts.head['italic'] ? 'italic' : 'normal') +
+                'font-family: ' + options.fonts.head.fontFamily +
+                ';font-size: ' + options.fonts.head.fontSize + 'pt' +
+                ';fill: ' + options.fonts.head.color +
+                ';font-weight: ' + (options.fonts.head.bold ? 'bold' : 'normal') +
+                ';font-style: ' + (options.fonts.head.italic ? 'italic' : 'normal') +
             '} ' +
             '.sprouts__line { ' +
                 'stroke: ' + options.lineColor +
@@ -329,7 +345,7 @@ TreeNode.prototype = {
                 headHeight = headBBox.height;
 
             // position head under label and connectors
-            head._attrs({ 'y': labelY + (headHeight * (hasConnector ? 2 : 1)) })
+            head._attrs({ 'y': labelY + (headHeight * (hasConnector ? 2 : 1)) });
 
             // lazy linguist triangles
             if(hasTriangle) {
@@ -354,7 +370,7 @@ TreeNode.prototype = {
                 });
                 svg.appendChild(line);
             }            
-        }        
+        }
 
         // get total width (label + children) and center label
         var bbox = svg.getBBox(),

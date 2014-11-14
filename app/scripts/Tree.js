@@ -32,6 +32,13 @@ var Tree = function(contents, initialOptions) {
     this.textElement = document.getElementById('sprouts-text');
 
     /**
+     * node to move. Next node selected will be target.
+     *
+     * @property nodeToMove {TreeNode}
+     **/
+    this.nodeToMove = null;
+
+    /**
      * root node
      *
      * @property root {TreeNode}
@@ -132,7 +139,12 @@ Tree.prototype = {
                 target = target.parentNode;
             }
 
-            that.select(target.treeNode);
+            if(that.nodeToMove) {
+                that.select(that.nodeToMove.moveTo(target.treeNode), true);
+                that.nodeToMove = null;
+            } else {
+                that.select(target.treeNode);
+            }
         };
     }
 };
