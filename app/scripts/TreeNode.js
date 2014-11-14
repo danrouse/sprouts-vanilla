@@ -32,9 +32,16 @@ var TreeNode = function(options) {
     /**
      * reference to initial position if moved
      *
-     * @property trace {TreeNode}
+     * @property traceFrom {TreeNode}
      **/
-    this.trace = null;
+    this.traceFrom = null;
+
+    /**
+     * reference to destination position if moved
+     *
+     * @property traceTo {TreeNode}
+     **/
+    this.traceTo = null;
 
 
     var fromString = options.fromString || '';
@@ -99,11 +106,17 @@ TreeNode.prototype = {
         trace.head = 't';
         trace.children = [];
 
-        // add reference
-        this.trace = trace;
-
-        // swap in the tree structure
+        // add references
+        this.traceFrom = trace;
+        trace.traceTo = this;
         parent.children[parent.children.indexOf(this)] = trace;
+
+        // adjoin to a head
+        if(targetNode.head) {
+            targetNode.addChild({ type: targetNode.type, head: targetNode.head });
+        }
+
+        // move to target in the tree
         targetNode.children.splice(position || 0, 0, this);
 
         return this;
@@ -274,8 +287,9 @@ TreeNode.prototype = {
         label.appendChild(document.createTextNode(this.type));
         svg.appendChild(label);
 
-        var labelY = svg.getBBox().height;
-        var labelWidth = svg.getBBox().width;
+        var labelBBox = svg.getBBox(),
+            labelHeight = labelBBox.height,
+            labelWidth = labelBBox.width;
 
         // render children
         if(this.children.length) {
@@ -283,7 +297,12 @@ TreeNode.prototype = {
             svg.appendChild(children);
 
             for(i in this.children) {
-                // Generate children recursively
+                // ignore traces
+                if(!options.showTraces && this.children[i].traceTo) {
+                    continue;
+                }
+
+                // generate children recursively
                 var child = this.children[i].toSVG();
                 children.appendChild(child);
                 var childWidth = child.getBBox().width;
@@ -294,7 +313,7 @@ TreeNode.prototype = {
                     'y': options.nodeSpacingY
                 });
 
-                // create first point of connecting line at top center of child
+                // create connecting line at top center of child
                 var line = _svgelem('line');
                 line._attrs({
                     'class': 'sprouts__line',
@@ -320,6 +339,15 @@ TreeNode.prototype = {
             // no children, but there is a lexical head to display
             head = _svgelem('text', { 'class': 'sprouts__head' });
 
+            // traces are italic
+            if(this.traceTo) {
+                head._attrs({
+                    'style': 'font-style: ' +
+                        (options.fonts.head.italic ? 'normal' : 'italic') +
+                        ' !important'
+                });
+            }
+
             var hasConnector = options.headLines,
                 hasTriangle = false,
                 headText = this.head;
@@ -342,17 +370,22 @@ TreeNode.prototype = {
 
             var headBBox = head.getBBox(),
                 headWidth = headBBox.width,
-                headHeight = headBBox.height;
+                headHeight = headBBox.height,
+                nodeWidth = Math.max(labelWidth, headWidth),
+                centerX = nodeWidth / 2;
 
             // position head under label and connectors
-            head._attrs({ 'y': labelY + (headHeight * (hasConnector ? 2 : 1)) });
+            head._attrs({
+                'x': centerX - (headWidth / 2),
+                'y': labelHeight + (headHeight * (hasConnector ? 2 : 1))
+            });
 
             // lazy linguist triangles
             if(hasTriangle) {
                 var triangle = _svgelem('polygon', { 'class': 'sprouts__line' });
-                var points = [[0, labelY + headHeight],
-                              [headWidth, labelY + headHeight],
-                              [headWidth / 2, labelY]];
+                var points = [[0, labelHeight + headHeight],
+                              [nodeWidth, labelHeight + headHeight],
+                              [centerX, labelHeight]];
                 triangle._attrs({
                     'points': points.reduce(function(str,val) {
                         return str + ' ' + val.join(',');
@@ -363,10 +396,10 @@ TreeNode.prototype = {
                 // connect head with line
                 var line = _svgelem('line', {
                     'class': 'sprouts__line',
-                    'x1': headWidth / 2,
-                    'x2': headWidth / 2,
-                    'y1': labelY,
-                    'y2': labelY + headHeight
+                    'x1': centerX,
+                    'x2': centerX,
+                    'y1': labelHeight,
+                    'y2': labelHeight + headHeight
                 });
                 svg.appendChild(line);
             }            
@@ -379,14 +412,14 @@ TreeNode.prototype = {
         label._attrs({
             'text-anchor': 'middle',
             'x': width / 2,
-            'y': labelY * 0.8
+            'y': labelHeight * 0.8
         });
 
         // point lines towards center
         for(i in lines) {
             lines[i]._attrs({
                 'x2': width / 2,
-                'y2': labelY + options.linePadding
+                'y2': labelHeight + options.linePadding
             });
         }
 

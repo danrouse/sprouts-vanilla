@@ -130,6 +130,13 @@ Tree.prototype = {
         }
         this.treeElement.appendChild(svg);
 
+        // reapply UI styles
+        if(this.nodeToMove) {
+            this.nodeToMove.svg._attrs({'class': 'moving'});
+        } else if(this.selectedNode) {
+            this.selectedNode.svg._attrs({'class': 'selected'});
+        }
+
         // bind UI events
         var that = this;
         svg.onclick = function(event) {

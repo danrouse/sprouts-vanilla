@@ -26,7 +26,8 @@
         lineWidth: 2,
         lineColor: '#2e1a06',
         headLines: true,
-        lazyTriangles: false
+        lazyTriangles: false,
+        showTraces: true
     };
 
     // make a basic tree
@@ -224,8 +225,13 @@
 
         startMovement: function() {
             var target = tree.selectedNode;
-            tree.nodeToMove = target;
-            target.svg._attrs({ 'class': 'moving' });
+            if(!tree.nodeToMove) {
+                tree.nodeToMove = target;
+                target.svg._attrs({ 'class': 'moving' });
+            } else {
+                tree.nodeToMove = null;
+                target.svg._attrs({ 'class': 'selected' });
+            }
         },
 
         saveSVG: function() {
