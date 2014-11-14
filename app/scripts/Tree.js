@@ -73,6 +73,37 @@ Tree.prototype = {
     },
 
     /**
+     * selects a node in the tree
+     *
+     * @method select
+     * @param targetNode {TreeNode}
+     * @param redraw {Boolean} redraw the tree
+     **/
+    select: function(targetNode, redraw) {
+        if(redraw) { this.draw(); }
+
+        // remove existing selection class
+        if(this.selectedNode) {
+            this.selectedNode.svg._attrs({'class': ''});
+        }
+
+        // select target node
+        targetNode.svg._attrs({'class': 'selected'});
+        this.selectedNode = targetNode;
+
+        // update UI action buttons
+        // TODO: make a better system for this
+        if(targetNode.parent) {
+            document.getElementById('button-startMovement').style.display = 'block';
+        } else {
+            document.getElementById('button-startMovement').style.display = 'none';
+        }
+
+        // update selected text area
+        this.textElement.value = targetNode.toString();
+    },
+
+    /**
      * generates SVG and updates the DOM
      *
      * @method draw
@@ -90,23 +121,13 @@ Tree.prototype = {
         // bind UI events
         var that = this;
         svg.onclick = function(event) {
-            // remove existing selection class
-            if(that.selectedNode) {
-                that.selectedNode.svg._attrs({'class': ''});
-            }
-
             // find first svg parent of click event target
             var target = event.target;
             while(target.nodeName !== 'svg') {
                 target = target.parentNode;
             }
-            
-            // select target node
-            target._attrs({'class': 'selected'});
-            that.selectedNode = target.treeNode;
 
-            // update selected text area
-            that.textElement.value = target.treeNode.toString();
+            that.select(target.treeNode);
         };
     }
 };

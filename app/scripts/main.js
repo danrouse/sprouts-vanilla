@@ -172,6 +172,27 @@
 
     // action buttons
     var actions = {
+        addChild: function() {
+            var child = tree.selectedNode.addChild('XP');
+            tree.select(child, true);
+        },
+
+        removeNode: function() {
+            var newSelection = tree.selectedNode.parent;
+            for(var i in newSelection.children) {
+                if(newSelection.children[i] === tree.selectedNode) {
+                    newSelection.children.splice(i, 1);
+                    break;
+                }
+            }
+
+            tree.select(newSelection, true);
+        },
+
+        startMovement: function() {
+            console.log('start movement', tree.selectedNode);
+        },
+
         saveSVG: function() {
             var slug = tree.toString(true),
                 svg = tree.root.svg,

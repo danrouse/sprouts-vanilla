@@ -66,10 +66,31 @@ TreeNode.prototype = {
      *
      * @method removeChild
      * @param position {Number} child index to remove
+     * @return this {TreeNode}
      **/
     removeChild: function(position) {
         position = typeof position === 'undefined' ? 0 : position;
         this.children.splice(position, 1);
+        return this;
+    },
+
+    /**
+     * moves a node into another, leaving a trace
+     *
+     * @method moveTo
+     * @param targetNode {TreeNode} node to move under
+     **/
+    moveTo: function(targetNode) {
+        // copy and move to target
+        var copy = Object.create(this);
+        copy.parent = targetNode;
+        targetNode.children.splice(position, 0, copy);
+
+        // clear children and replace with trace head
+        this.head = 't';
+        this.children = [];
+
+        return copy;
     },
 
     /**
