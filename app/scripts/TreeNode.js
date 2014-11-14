@@ -123,10 +123,6 @@ TreeNode.prototype = {
             '.sprouts__line { ' +
                 'stroke: ' + options.lineColor +
                 ';stroke-width: ' + options.lineWidth +
-            '} ' +
-            '.sprouts__triangle { ' +
-                'stroke: ' + options.lineColor +
-                ';stroke-width: ' + options.lineWidth +
                 ';fill: none' +
             '}';
 
@@ -304,26 +300,56 @@ TreeNode.prototype = {
             // no children, but there is a lexical head to display
             head = _svgelem('text', { 'class': 'sprouts__head' });
 
-            var hasTriangle = this.head[0] === '^';
+            var hasConnector = options.headLines,
+                hasTriangle = false,
+                headText = this.head;
 
-            head.appendChild(document.createTextNode(hasTriangle ? this.head.substr(1) : this.head));
+            // carets trigger explicit triangles
+            if(headText[0] === '^') {
+                hasConnector = hasTriangle = true;
+                // remove caret from text
+                headText = headText.substring(1);
+            } else if(this.type[this.type.length - 1] === 'P' &&
+                      this.type.length > 1 &&
+                      options.lazyTriangles) {
+                // lazy triangles triggered for any node ending in P
+                hasConnector = hasTriangle = true;
+            }
+
+            // create and measure head
+            head.appendChild(document.createTextNode(headText));
             svg.appendChild(head);
 
-            var headBBox = head.getBBox();
+            var headBBox = head.getBBox(),
+                headWidth = headBBox.width,
+                headHeight = headBBox.height;
+
+            // position head under label and connectors
+            head._attrs({ 'y': labelY + (headHeight * (hasConnector ? 2 : 1)) })
 
             // lazy linguist triangles
             if(hasTriangle) {
-                var triangle = _svgelem('polygon', { 'class': 'sprouts__triangle' });
-                var points = [
-                    '0,' + (labelY * 1.3),//+ headBBox.height),
-                    headBBox.width + ',' + (labelY * 1.3),// + headBBox.height),
-                    (headBBox.width / 2) + ',' + (labelY)];
-
-                triangle._attrs({ 'points': points.join(' ') });
+                var triangle = _svgelem('polygon', { 'class': 'sprouts__line' });
+                var points = [[0, labelY + headHeight],
+                              [headWidth, labelY + headHeight],
+                              [headWidth / 2, labelY]];
+                triangle._attrs({
+                    'points': points.reduce(function(str,val) {
+                        return str + ' ' + val.join(',');
+                    })
+                });
                 svg.appendChild(triangle);
-            }
-
-            
+            } else if(hasConnector) {
+                // connect head with line
+                var line = _svgelem('line', {
+                    'class': 'sprouts__line',
+                    'x1': headWidth / 2,
+                    'x2': headWidth / 2,
+                    'y1': labelY,
+                    'y2': labelY + headHeight
+                });
+                svg.appendChild(line);
+            }            
         }        
 
         // get total width (label + children) and center label
@@ -342,16 +368,6 @@ TreeNode.prototype = {
                 'x2': width / 2,
                 'y2': labelY + options.linePadding
             });
-        }
-
-        // move lexical head under label as well
-        if(head) {
-            head._attrs({
-                'y': (labelY * 1) + head.getBBox().height
-            });
-
-            // recalc bbox height for moved text
-            height = svg.getBBox().height;
         }
 
         // explicitly state final size

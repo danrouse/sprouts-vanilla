@@ -24,7 +24,9 @@
         nodeSpacingX: 12,
         linePadding: 1,
         lineWidth: 1,
-        lineColor: '#2e1a06'
+        lineColor: '#2e1a06',
+        headLines: true,
+        lazyTriangles: true
     };
 
     // make a basic tree
