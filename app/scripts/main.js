@@ -253,4 +253,78 @@
         tree.selectedNode = newNode;
         tree.draw();
     };
+
+    // keyboard controls
+    document.onkeydown = function(event) {
+        if(event.target.nodeName !== 'BODY') { return; }
+
+        var selectedNode = tree.selectedNode,
+            parent = selectedNode.parent,
+            siblings = parent ? parent.children : null;
+
+        switch(event.keyCode) {
+            case 37:
+                // left arrow: select sibling to the left
+                var target;
+
+                if(siblings) {
+                    var index = siblings.indexOf(tree.selectedNode);
+                    if(index > 0) {
+                        target = siblings[index - 1];
+                    }
+                }
+                if(!target) {
+                    // select first child
+                    if(selectedNode.children.length) {
+                        target = selectedNode.children[0];
+                    }
+                }
+                
+                if(target) { tree.select(target); }
+                break;
+
+            case 38:
+                // up arrow: select parent
+                if(selectedNode.parent) {
+                    tree.select(selectedNode.parent);
+                }
+                break;
+
+            case 39:
+                // right arrow: select sibling to the right
+                var target;
+                
+                if(siblings) {
+                    var index = siblings.indexOf(tree.selectedNode);
+                    if(index < siblings.length - 1) {
+                        target = siblings[index + 1];
+                    }
+                }
+                if(!target) {
+                    // select last child
+                    if(selectedNode.children.length) {
+                        target = selectedNode.children[selectedNode.children.length - 1];
+                    }
+                }
+                
+                if(target) { tree.select(target); }
+                break;
+
+            case 40:
+                // down arrow: select first child
+                if(selectedNode.children.length) {
+                    var index = Math.floor(selectedNode.children.length / 2) - 1;
+                    tree.select(selectedNode.children[index]);
+                }
+                break;
+
+            case 13:
+                // enter: create child
+                tree.select(selectedNode.addChild('XP'), true);
+                break;
+
+            default:
+                console.log('keycode', event.keyCode);
+        }
+    };
 })();
