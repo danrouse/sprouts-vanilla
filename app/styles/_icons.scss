@@ -1,0 +1,15 @@
+// hide root symbol definitions
+body > svg:first-child { display: none; }
+
+.icon {
+	//float: left;
+	width: 1.5em;
+	height: 1.5em;
+	margin-top: -.25em;
+	margin-bottom: -.25em;
+	margin-right: .5em;
+}
+
+.icon ~ .icon-desc {
+	display: none;
+}

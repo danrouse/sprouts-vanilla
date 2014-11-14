@@ -1,5 +1,6 @@
 @import "reset";
 @import "variables";
+@import "icons";
 @import "animation";
 
 html, body { height: 100%; overflow: hidden; }
@@ -57,6 +58,14 @@ body {
     background-color: $blue;
     font-size: 80%;
     padding: $padding;
+
+    ul {
+        list-style: none;
+    }
+        li {
+            display: inline;
+            margin-right: $padding;
+        }
 }
 
 // form styles
@@ -77,6 +86,10 @@ button {
 // links
 a {
     color: $red;
+
+    &:hover {
+        color: $red2;
+    }
 }
 
 h1 { font-size: 2.827em; }
