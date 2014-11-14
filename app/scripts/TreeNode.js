@@ -207,19 +207,23 @@ TreeNode.prototype = {
      *
      * @method toString
      * @param headsOnly {Boolean} only output heads, no brackets or phrase names
+     * @param highlight {Boolean} style output using <span> elements
      * @return bracketed_text {string}
      **/
-    toString: function(headsOnly) {
-        var out = headsOnly ? '' : this.type;
+    toString: function(headsOnly, highlight) {
+        var out = '';
+        if(!headsOnly) {
+            out = highlight ? '<span class="node">' + this.type + '</span>' : this.type;
+        }
 
         if(this.children.length) {
             // recurse through children
             for(var i in this.children) {
-                out += ' ' + this.children[i].toString(headsOnly);
+                out += ' ' + this.children[i].toString(headsOnly, highlight);
             }
         } else if(this.head.length) {
             // add head
-            out += ' ' + this.head;
+            out += ' ' + (highlight ? '<span class="head">' + this.head + '</span>' : this.head);
         }
 
         return headsOnly ? out.trim() : '[' + out + ']';

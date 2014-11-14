@@ -3,16 +3,22 @@
     padding: $padding;
     border: 0;
     border-bottom: ($border / 2) solid $brown;
+    background-color: $green;
     font-size: 105%;
     letter-spacing: 1px;
-
-    background-color: $green;
     
+    &:focus {
+        background-color: $white;
+    }
     &:hover {
         background-color: $green2;
     }
-    &:focus {
-        background-color: $white;
+
+    .node {
+        font-weight: bold;
+    }
+    .head {
+        color: $red;
     }
 }
 

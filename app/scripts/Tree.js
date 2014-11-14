@@ -41,14 +41,13 @@ var Tree = function(contents, initialOptions) {
      *
      * @property selectedNode {TreeNode}
      **/
-    this.root = this.selectedNode = new TreeNode({
+    this.root = new TreeNode({
         fromString: contents,
         options: this.options
     });
 
     // render
-    this.draw();
-    this.textElement.value = this.toString();
+    this.select(this.root, true);
 };
 Tree.prototype = {
     /**
@@ -77,10 +76,12 @@ Tree.prototype = {
      *
      * @method select
      * @param targetNode {TreeNode}
-     * @param redraw {Boolean} redraw the tree
+     * @param redrawTree {Boolean} redraw the tree
+     * @param redrawText {Boolean}
+     * @return targetNode {TreeNode} selected node
      **/
-    select: function(targetNode, redraw) {
-        if(redraw) { this.draw(); }
+    select: function(targetNode, redrawTree, redrawText) {
+        if(redrawTree) { this.draw(); }
 
         // remove existing selection class
         if(this.selectedNode) {
@@ -100,7 +101,11 @@ Tree.prototype = {
         }
 
         // update selected text area
-        this.textElement.value = targetNode.toString();
+        if(redrawText !== false) {
+            this.textElement.innerHTML = targetNode.toString(false, true);
+        }
+
+        return targetNode;
     },
 
     /**

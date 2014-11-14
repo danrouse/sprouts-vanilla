@@ -262,12 +262,18 @@
     }
 
     // databind the tree contents text input
-    tree.textElement.onkeyup = function() {
+    function updateText(event) {
+        // check if text was really updated
+        if(this.lastText &&
+           this.lastText === this.innerText &&
+           event.type !== 'blur') {
+            return;
+        }
         var parent = tree.selectedNode.parent;
 
         // create new node from contents
         var newNode = new TreeNode({
-            fromString: this.value,
+            fromString: this.innerText,
             options: tree.options
         });
 
@@ -287,9 +293,27 @@
         }
 
         // update selection and redraw
-        tree.selectedNode = newNode;
-        tree.draw();
-    };
+        tree.select(newNode, true, (event.type === 'blur' || event.type === 'paste'));
+        // var selection = window.getSelection(),
+        //     rangeBefore = selection.getRangeAt(0).startOffset;
+        // tree.select(newNode, true, false);
+        // var rangeAfter = selection.getRangeAt(0).startOffset;
+        // var targetTextNode = this.childNodes[rangeAfter],
+        //     targetRange = document.createRange();
+        // console.log('target node offset', rangeBefore, rangeAfter, targetTextNode);
+        // targetRange.selectNodeContents(targetTextNode);
+        // console.log('new range', targetTextNode.nodeType);
+        // //targetRange.setStart(targetTextNode, rangeBefore);
+        // targetRange.collapse(true);
+        // selection.removeAllRanges();
+        // selection.addRange(targetRange);
+
+        this.lastText = this.innerText;
+    }
+    tree.textElement.onkeyup = updateText;
+    tree.textElement.onblur = updateText;
+    tree.textElement.onpaste = updateText;
+    tree.textElement.oninput = updateText;
 
     // keyboard controls
     document.onkeydown = function(event) {
