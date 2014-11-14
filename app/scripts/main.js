@@ -156,7 +156,7 @@
         updateFont(fontPreview, destFont);
     }
 
-    // settings handlers
+    // non-font settings handlers
     function changeSetting() {
         var value = this.value;
         if(this.type === 'number' || this.type === 'range') {
@@ -172,8 +172,39 @@
         settingElems[i].onchange = changeSetting.bind(settingElems[i]);
     }
 
+    // collapsible settings groups
+    function toggleCollapsible() {
+        // dataset won't hold true booleans
+        if(this.dataset.collapsed !== 'true') {
+            console.log('hiding');
+            this.nextElementSibling.style.display = 'none';
+            this.dataset.collapsed = 'true';
+            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-plus');
+        } else {
+            console.log('showing');
+            this.nextElementSibling.style.display = 'block';
+            this.dataset.collapsed = false;
+            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-minus');
+        }
+    }
+    var collapsibleElems = document.getElementsByClassName('collapsible');
+    for(var i=0; i<collapsibleElems.length; i++) {
+        collapsibleElems[i].onclick = toggleCollapsible.bind(collapsibleElems[i]);
+    }
+
     // action buttons
     var actions = {
+        toggleSidebar: function(event, target) {
+            var sidebar = document.getElementById('sidebar');
+            if(sidebar.className === 'sidebar collapsed') {
+                sidebar.className = 'sidebar';
+                target.firstElementChild.firstElementChild.setAttribute('xlink:href', '#icon-left');
+            } else {
+                sidebar.className = 'sidebar collapsed';
+                target.firstElementChild.firstElementChild.setAttribute('xlink:href', '#icon-right');
+            }
+        },
+
         addChild: function() {
             var child = tree.selectedNode.addChild('XP');
             tree.select(child, true);
@@ -217,9 +248,13 @@
         }
     };
     function handleAction(event) {
+        var target = event.target;
+        while(target.parentNode && target.nodeName !== 'BUTTON') {
+            target = target.parentNode;
+        }
         // get target action
-        var action = actions[event.target.dataset.action];
-        if(action) { action(event); }
+        var action = actions[target.dataset.action];
+        if(action) { action(event, target); }
     }
     var buttonElems = document.getElementsByTagName('button');
     for(var i=0; i<buttonElems.length; i++) {

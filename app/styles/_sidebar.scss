@@ -1,10 +1,11 @@
 .sidebar {
     float: left;
     height: 75%;
-    width: 25%;
+    max-width: 25%;
     border-right: $border solid $brown;
     background-color: $white2;
     overflow-y: auto;
+    position: relative;
 
     h2 {
         display: block;
@@ -20,6 +21,47 @@
         font-weight: bold;
         font-size: 1em;
         background-color: $tan;
+
+        .icon {
+            font-size: .5em;
+            margin-right: 1em;
+        }
+
+        &:hover {
+            cursor: pointer;
+            background-color: $tan2;
+        }
+    }
+
+    // sidebar toggler
+    .toggle-button {
+        position: absolute;
+        top: calc(#{$padding} + 1em);
+        right: $padding;
+        margin-top: -0.5em;
+        background-color: transparent;
+        border: 0;
+
+        &:hover {
+            svg {
+                fill: $brown2;
+            }
+            cursor: pointer;
+        }
+    }
+
+    &.collapsed {
+        overflow: hidden;
+        width: 3em;
+        background-color: $tan;
+        
+        .toggle-button {
+            right: $padding / 2;
+        }
+
+        > *:not(.toggle-button) {
+            display: none;
+        }
     }
 }
     .settings {
@@ -27,20 +69,24 @@
         font-size: 80%;
         list-style: none;
 
+        li {
+            padding: 0 $padding;
+        }
+
         label {
             display: inline-block;
-            padding: 0 $padding;
             width: 70%;
         }
-        input[type="text"],
-        input[type="number"],
-        input[type="color"],
-        input[type="range"],
+        input,
         select {
             margin: 0;
             width: 30%;
             height: 2em;
             text-align: right;
+        }
+
+        input[type="color"] {
+            padding: 0;
         }
     }
 
@@ -53,12 +99,14 @@
             ul {
                 //display: none;
                 position: absolute;
+                //top: $padding;
                 bottom: 0;
-                left: 0;
+                left: $padding;
+                right: $padding;
                 z-index: 9001;
-                width: 100%;
-                border-top: ($border / 2) solid $brown;
-                border-bottom: ($border / 2) solid $brown;
+                //border: ($border / 3) solid $brown;
+                //border-bottom-width: $border * 2;
+                border-bottom: ($border * 2) solid $brown;
 
                 clip: rect(0, 1000px, 0px, 0);
                 transition: clip 0.1s ease-out;
@@ -89,9 +137,8 @@
                 text-align: right;
             }
             .font-preview {
-                margin-bottom: -$padding;
                 padding: $padding;
-                background-color: $blue;
+                background-color: $tan2;
 
                 clear: both;
                 white-space: nowrap;
@@ -99,10 +146,10 @@
                 position: relative;
 
                 &:hover {
-                    background-color: $blue2;
+                    background-color: $tan;
                     cursor: pointer;
                     &:after {
-                        border-top-color: $green;
+                        border-top-color: $brown2;
                     }
                 }
 

@@ -33,7 +33,14 @@ body {
     button {
         float: left;
         padding: $padding;
+        border: 0;
         border-right: ($border / 2) solid $brown;
+
+        background-color: $blue;
+        &:hover {
+            background-color: $blue2;
+            cursor: pointer;
+        }
     }
 
     // clearfix for floated buttons
@@ -72,15 +79,6 @@ body {
 input, textarea, select {
     background-color: $white;
     border: ($border / 2) solid $tan;
-}
-
-button {
-    border: 0;
-    background-color: $blue;
-    &:hover {
-        background-color: $blue2;
-        cursor: pointer;
-    }
 }
 
 // links
