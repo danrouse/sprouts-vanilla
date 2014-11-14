@@ -12,8 +12,8 @@
                 'italic': false
             },
             head: {
-                'font-family': 'Courier New',
-                'font-size': 14,
+                'font-family': 'Open Sans',
+                'font-size': 12,
                 'color': '#9b1d00',
                 'bold': false,
                 'italic': false
@@ -22,11 +22,11 @@
 
         nodeSpacingY: 50,
         nodeSpacingX: 12,
-        linePadding: 1,
-        lineWidth: 1,
+        linePadding: 0,
+        lineWidth: 2,
         lineColor: '#2e1a06',
         headLines: true,
-        lazyTriangles: true
+        lazyTriangles: false
     };
 
     // make a basic tree
@@ -112,19 +112,19 @@
         };
 
         // hide the font list if we click out anywhere else
-        document.onclick = function(e) {
-            // if(fontListVisible &&
-            //    event.target.parentNode !== fontList &&
-            //    event.target.parentNode !== fontPreview &&
-            //    event.target.parentNode !== selector) {
-            //     // this is conflicting with multiple elements
-            //     // (multiple document.onclick functions hiding each other)
+        // document.onclick = function(e) {
+        //     if(fontListVisible &&
+        //        event.target.parentNode !== fontList &&
+        //        event.target.parentNode !== fontPreview &&
+        //        event.target.parentNode !== selector) {
+        //         // this is conflicting with multiple elements
+        //         // (multiple document.onclick functions hiding each other)
 
-            //     // fontList.className = '';
-            //     // console.log('hiding', event.target.parentNode, 'selector', selector);
-            //     // fontListVisible = false;
-            // }
-        }
+        //         // fontList.className = '';
+        //         // console.log('hiding', event.target.parentNode, 'selector', selector);
+        //         // fontListVisible = false;
+        //     }
+        // }
 
         // simple event handlers for the chirrens
         selector.children['font-size'].oninput = function() {

@@ -1,7 +1,7 @@
 .sidebar {
     float: left;
     height: 75%;
-    max-width: 50%;
+    width: 25%;
     border-right: $border solid $brown;
     background-color: $white2;
     overflow-y: auto;
@@ -35,61 +35,116 @@
         input[type="text"],
         input[type="number"],
         input[type="color"],
+        input[type="range"],
         select {
+            margin: 0;
+            width: 30%;
             height: 2em;
             text-align: right;
-            width: 30%;
         }
     }
 
-    // font selectors
-    .font-selector {
-        position: relative;
-        padding: 0 $padding $padding;
+        // font selectors
+        .font-selector {
+            position: relative;
+            //padding: 0 $padding $padding;
 
-        label {
-            margin-right: $padding;
-        }
+            // font list
+            ul {
+                //display: none;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                z-index: 9001;
+                width: 100%;
+                border-top: ($border / 2) solid $brown;
+                border-bottom: ($border / 2) solid $brown;
 
-        // font list
-        ul {
-            //display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 9001;
-            width: 100%;
-            border-top: ($border / 2) solid $brown;
-            border-bottom: ($border / 2) solid $brown;
+                clip: rect(0, 1000px, 0px, 0);
+                transition: clip 0.1s ease-out;
 
-            clip: rect(0, 1000px, 0px, 0);
-            transition: clip 0.1s ease-out;
-
-            &.visible {
-                display: block;
-                clip: rect(0, 1000px, 600px, 0);
+                &.visible {
+                    display: block;
+                    clip: rect(0, 1000px, 600px, 0);
+                }
             }
-        }
-            li {
-                padding: ($padding / 2) $padding;
+                li {
+                    padding: ($padding / 2) $padding;
+                    background-color: $blue;
+
+                    &:hover {
+                        background-color: $green;
+                        cursor: pointer;
+                    }
+                }
+
+            .font-settings-label {
+                width: 50%;
+                height: 2em;
+                margin-top: .5em;
+            }
+            .font-settings-group {
+                display: inline-block;
+                width: 50%;
+                text-align: right;
+            }
+            .font-preview {
+                margin-bottom: -$padding;
+                padding: $padding;
                 background-color: $blue;
 
+                clear: both;
+                white-space: nowrap;
+                overflow: hidden;
+                position: relative;
+
                 &:hover {
-                    background-color: $green;
+                    background-color: $blue2;
+                    cursor: pointer;
+                    &:after {
+                        border-top-color: $green;
+                    }
+                }
+
+                &:after {
+                    // triangle
+                    content: ' ';
+                    display: block;
+                    position: absolute;
+                    right: $padding;
+                    top: 50%;
+                    margin-top: (-$padding / 3);
+                    width: 0;
+                    height: 0;
+                    border: ($padding / 1.5) solid transparent;
+                    border-bottom-width: 0;
+                    border-top-color: $brown;
+                }
+            }
+            input[type="color"] {
+                float: right;
+                width: 30%;
+            }
+            input[type="checkbox"] {
+                display: none;
+            }
+            input[type="checkbox"] + label {
+                width: 2em;
+                height: 2em;
+                padding: .5em;
+                float: right;
+
+                &:hover {
+                    background-color: $blue;
                     cursor: pointer;
                 }
             }
-    }
-        .font-preview {
-            margin: (-$padding) (-$padding) $padding (-$padding);
-            padding: $padding;
-            background-color: $blue;
+            input[type="checkbox"]:checked + label {
+                background-color: $tan;
 
-            white-space: nowrap;
-            overflow: hidden;
-
-            &:hover {
-                background-color: $blue2;
-                cursor: pointer;
+                &:hover {
+                    background-color: $tan3;
+                }
             }
         }
+            
