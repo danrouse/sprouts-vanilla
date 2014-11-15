@@ -45,13 +45,18 @@ var UserInterface = function(rootNode) {
      **/
     this.selectedNode = null;
 
+    /**
+     * available font faces
+     *
+     * @property fonts {Array} font family names
+     **/
     this.fonts = ['Open Sans', 'Arial', 'Times New Roman', 'Impact', 'Garamond', 'Comic Sans MS', 'Courier New'];
 
     this.init();
 };
 UserInterface.prototype = {
     /**
-     * selects a node in the tree
+     * Selects a node in the tree.
      *
      * @method select
      * @param targetNode {TreeNode}
@@ -88,7 +93,7 @@ UserInterface.prototype = {
     },
 
     /**
-     * generates SVG and updates the DOM
+     * Generates a new SVG of the tree and inserts it in the DOM.
      *
      * @method draw
      **/
@@ -127,6 +132,13 @@ UserInterface.prototype = {
         };
     },
 
+    /**
+     * Shows or hides the sidebar.
+     * 
+     * @method toggleSidebar
+     * @param event {Event} click event
+     * @param target
+     **/
     toggleSidebar: function(event, target) {
         var sidebar = document.getElementById('sidebar');
         if(sidebar.className === 'sidebar collapsed') {
@@ -138,6 +150,11 @@ UserInterface.prototype = {
         }
     },
 
+    /**
+     * Toggles visibility a collapsible settings group.
+     * 
+     * @method toggleCollapsible
+     **/
     toggleCollapsible: function() {
         // dataset won't hold true booleans
         if(this.dataset.collapsed !== 'true') {
@@ -153,11 +170,21 @@ UserInterface.prototype = {
         }
     },
 
+    /**
+     * Adds a new child under the selected node.
+     * 
+     * @method addChild
+     **/
     addChild: function() {
         var child = this.selectedNode.addChild('XP');
         this.select(child, true);
     },
 
+    /**
+     * Removes the selected node from the tree.
+     * 
+     * @method removeNode
+     **/
     removeNode: function() {
         var newSelection = this.selectedNode.parent;
         for(var i in newSelection.children) {
@@ -170,6 +197,11 @@ UserInterface.prototype = {
         this.select(newSelection, true);
     },
 
+    /**
+     * Starts movement from the current selected node.
+     * 
+     * @method startMovement
+     **/
     startMovement: function() {
         var target = this.selectedNode;
         if(!this.nodeToMove) {
@@ -181,6 +213,11 @@ UserInterface.prototype = {
         }
     },
 
+    /**
+     * Triggers a download of an SVG image of the current tree.
+     * 
+     * @method saveSVG
+     **/
     saveSVG: function() {
         var slug = this.tree.toString(true),
             svg = this.tree.svg,
@@ -193,6 +230,11 @@ UserInterface.prototype = {
         _download('data:image/svg+xml,' + encodeURIComponent(xml), 'sprouts-' + slug + '.svg');
     },
 
+    /**
+     * Triggers a download of a PNG image of the current tree.
+     * 
+     * @method savePNG
+     **/
     savePNG: function() {
         var slug = this.tree.toString(true);
 
@@ -202,10 +244,14 @@ UserInterface.prototype = {
         _download(this.tree.toPNG(), 'sprouts-' + slug + '.png');
     },
 
-    /***
-     * Event handlers
+    /**
+     * Calls the UI method from the data-action attribute
+     * of an element. Click handler.
+     * 
+     * @method handleAction
+     * @param event {Event}
      **/
-    handleClick: function(event) {
+    handleAction: function(event) {
         var target = event.target;
         while(target.parentNode && !target.dataset.action) {
             target = target.parentNode;
@@ -215,6 +261,12 @@ UserInterface.prototype = {
         if(typeof action === 'function') { action.bind(this)(event, target); }
     },
 
+    /**
+     * Handles bracketed text input events.
+     * 
+     * @method handleTextUpdate
+     * @param event {Event}
+     **/
     handleTextUpdate: function(event) {
         // check if text was really updated
         if(this.textElement.lastText &&
@@ -264,6 +316,12 @@ UserInterface.prototype = {
         this.textElement.lastText = this.textElement.innerText;
     },
 
+    /**
+     * Handles keyboard control.
+     * 
+     * @method handleGlobalKeypress
+     * @param event {Event}
+     **/
     handleGlobalKeypress: function(event) {
         if(event.target.nodeName !== 'BODY') { return; }
 
@@ -334,7 +392,13 @@ UserInterface.prototype = {
         }
     },
 
-    handleSettingChange: function(event) {
+    /**
+     * Updates a setting from DOM input.
+     * 
+     * @method handleSetting
+     * @param event {Event}
+     **/
+    handleSetting: function(event) {
         var elem = event.target,
             val = elem.value;
         if(elem.type === 'number' || elem.type === 'range') {
@@ -347,6 +411,14 @@ UserInterface.prototype = {
         this.draw();
     },
 
+    /**
+     * Updates font preview.
+     * 
+     * @method updateFont
+     * @param fontPreview {HTMLElement} preview element to update
+     * @param destFont {Object} font object to update
+     * @param attrs {Object} attrs in the font object to update
+     **/
     updateFont: function(fontPreview, destFont, attrs) {
         // copy attrs to destination font
         for(var key in attrs) {
@@ -369,12 +441,10 @@ UserInterface.prototype = {
         this.draw();
     },
 
-    handleFontEvent: function(event) {
-
-    },
-
     /**
-     * Initializer
+     * Initializes font settings selectors.
+     * 
+     * @method initFonts
      **/
     initFonts: function() {
         var fontSelectors = document.getElementsByClassName('font-selector'),
@@ -458,6 +528,11 @@ UserInterface.prototype = {
         }
     },
 
+    /**
+     * Initializes the UI. Called from constructor.
+     * 
+     * @method init
+     **/
     init: function() {
         var options = this.tree.options,
             elem;
@@ -483,10 +558,10 @@ UserInterface.prototype = {
         }     
 
         // settings handlers
-        _listen(document.getElementsByClassName('setting'), 'change', this.handleSettingChange.bind(this));
+        _listen(document.getElementsByClassName('setting'), 'change', this.handleSetting.bind(this));
 
         // action click handlers
-        _listen(document.querySelectorAll('[data-action]'), 'click', this.handleClick.bind(this));
+        _listen(document.querySelectorAll('[data-action]'), 'click', this.handleAction.bind(this));
 
         // databind the tree contents text input
         _listen(this.textElement, 'keyup blur paste input', this.handleTextUpdate.bind(this));

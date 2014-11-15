@@ -131,10 +131,10 @@ TreeNode.prototype = {
     },
 
     /**
-     * generates CSS from display options
-     * for SVG embedding
+     * Generates CSS from display options.
+     * For embedding in an SVG.
      *
-     * @method generateCSS()
+     * @method generateCSS
      * @return styleElem {Element}
      **/
     generateCSS: function() {
@@ -167,8 +167,7 @@ TreeNode.prototype = {
     },
 
     /**
-     * parses bracketed text into TreeNode objects
-     * with this object's options
+     * Parses bracketed text into TreeNode objects.
      *
      * @method fromString
      * @param text {String} bracketed text
@@ -240,7 +239,7 @@ TreeNode.prototype = {
     },
 
     /**
-     * convert this node and its children to bracketed text
+     * Converts this node and its children to bracketed text
      *
      * @method toString
      * @param headsOnly {Boolean} only output heads, no brackets or phrase names
@@ -447,7 +446,7 @@ TreeNode.prototype = {
     },
 
     /**
-     * create a PNG image based on a generated SVG
+     * Creates a PNG image based on a generated SVG
      *
      * @method toPNG
      * @return image {String} dataURL image/png
