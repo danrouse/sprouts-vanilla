@@ -147,7 +147,7 @@ UserInterface.prototype = {
      **/
     traverseDown: function(selectText) {
         if(this.selectedNode.children.length) {
-            this.select(this.selectedNode.children[Math.floor(this.selectedNode.children.length / 2) - 1], false, true, selectText);
+            this.select(this.selectedNode.children[Math.floor(this.selectedNode.children.length / 2)], false, true, selectText);
         }
     },
 
@@ -215,7 +215,29 @@ UserInterface.prototype = {
      * @method addChild
      **/
     addChild: function() {
-        var child = this.selectedNode.addChild('XP');
+        var child = this.selectedNode.addChild('XP',
+            Math.floor(this.selectedNode.children.length / 2));
+        this.select(child, true, true, true);
+    },
+
+    /**
+     * Adds a new child as the leftmost child of the selected node
+     *
+     * @method addChildLeft
+     */
+    addChildLeft: function() {
+        var child = this.selectedNode.addChild('XP', 0);
+        this.select(child, true, true, true);
+    },
+
+    /**
+     * Adds a new child as the rightmost child of the selected node
+     *
+     * @method addChildRight
+     */
+    addChildRight: function() {
+        var child = this.selectedNode.addChild('XP',
+            this.selectedNode.children.length);
         this.select(child, true, true, true);
     },
 
@@ -226,6 +248,9 @@ UserInterface.prototype = {
      **/
     addParent: function() {
         var parent = this.selectedNode.addParent('XP');
+        if(this.selectedNode === this.tree) {
+            this.tree = parent;
+        }
         this.select(parent, true, true, true);
     },
 
@@ -261,6 +286,8 @@ UserInterface.prototype = {
 
             this.nodeToMove = target;
             target.svg._attrs({ 'class': 'moving' });
+
+            this.hideMenu();
         } else {
             if(!target.coreference) {
                 target.coreferenceName = '';
@@ -389,13 +416,34 @@ UserInterface.prototype = {
      * @method showMenu
      **/
     showMenu: function() {
-        var label = this.selectedNode.svg.querySelector('.sprouts__label:first-of-type'),
+        var sel = this.selectedNode,
+            label = sel.svg.querySelector('.sprouts__label:first-of-type'),
             pos = label.getBoundingClientRect();
-        //this.menuElement.style.left = (pos.left) + 'px';
-        //this.menuElement.style.top = (pos.top) + 'px';
-        this.menuElement.className = 'sprouts-menu active';
+
+        // decide which buttons should be available
+        var rules = {
+            'removeNode': sel.parent,
+            'startMovement': !sel.isTrace,
+            'addChild': sel.children.length !== 1,
+            'addChildLeft': sel.children.length,
+            'addChildRight': sel.children.length,
+            'addSiblingLeft': sel.parent,
+            'addSiblingRight': sel.parent
+        }
+        for(var rule in rules) {
+            this.menuElement.querySelector('[data-action="' + rule + '"]').style.display = (rules[rule]) ? 'block' : 'none';
+        }
+
+        // place over label
         this.menuElement.style.transform = 'translateX(' + pos.left + 'px) ' +
-                'translateY(' + pos.top + 'px)';
+            'translateY(' + pos.top + 'px)';
+
+        // replay the active animation
+        this.menuElement.className = 'sprouts-menu';
+        setTimeout(function() {
+            this.menuElement.className = 'sprouts-menu active'
+        }.bind(this), 50);
+
         this.menuVisible = true;
     },
 
@@ -505,20 +553,7 @@ UserInterface.prototype = {
         }
 
         // update selection and redraw
-        this.select(newNode, true, (event.type === 'blur' || event.type === 'paste'));
-        // var selection = window.getSelection(),
-        //     rangeBefore = selection.getRangeAt(0).startOffset;
-        // tree.select(newNode, true, false);
-        // var rangeAfter = selection.getRangeAt(0).startOffset;
-        // var targetTextNode = this.childNodes[rangeAfter],
-        //     targetRange = document.createRange();
-        // console.log('target node offset', rangeBefore, rangeAfter, targetTextNode);
-        // targetRange.selectNodeContents(targetTextNode);
-        // console.log('new range', targetTextNode.nodeType);
-        // //targetRange.setStart(targetTextNode, rangeBefore);
-        // targetRange.collapse(true);
-        // selection.removeAllRanges();
-        // selection.addRange(targetRange);
+        this.select(newNode, true, (event.type === 'paste'));
 
         this.textElement.lastText = this.textElement.innerText;
     },
@@ -557,12 +592,11 @@ UserInterface.prototype = {
     /**
      * Handles global keyboard control.
      * 
-     * @method handleGlobalKeypress
+     * @method handleKeypress
      * @param event {Event}
      **/
-    handleGlobalKeypress: function(event) {
-        if(event.target.nodeName !== 'BODY') { return; }
-
+    handleKeypress: function(event) {
+        var captured = true;
         switch(event.keyCode) {
             // arrow keys
             case 37: this.traverseLeft(); break;
@@ -570,10 +604,28 @@ UserInterface.prototype = {
             case 39: this.traverseRight(); break;
             case 40: this.traverseDown(); break;
 
+            // esc key
+            case 27: this.hideMenu(); break;
+
             // enter key
             case 13: this.addChild(); break;
 
-            default: console.log('uncaptured global keypress', event.keyCode);
+            // tab key
+            case 9:
+                if(event.shiftKey) {
+                    this.traverseLeft(true);
+                } else {
+                    this.traverseRight(true);
+                }
+                break;
+
+            default:
+                captured = false;
+                console.log('uncaptured global keypress', event.keyCode);
+        }
+
+        if(captured) {
+            event.preventDefault();
         }
     },
 
@@ -768,10 +820,9 @@ UserInterface.prototype = {
 
         // databind the tree contents text input
         _listen(this.textElement, 'keyup paste input', this.handleTextUpdate.bind(this));
-        _listen(this.textElement, 'keydown', this.handleTextKeypress.bind(this));
 
         // keyboard controls
-        _listen(document, 'keydown', this.handleGlobalKeypress.bind(this));
+        _listen(document, 'keydown', this.handleKeypress.bind(this));
 
         // resizing
         _listen(window, 'resize', this.handleResize.bind(this));

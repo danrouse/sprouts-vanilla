@@ -78,14 +78,14 @@ TreeNode.prototype = {
      * @param options {Object}
      * @return child {TreeNode}
      **/
-    addChild: function(options) {
+    addChild: function(options, position) {
         // allow just phrase name to be passed instead of options
         if(typeof options === 'string') {
             options = { type: options, head: '' };
         }
 
         var child = new TreeNode({ type: options.type, head: options.head, options: this.options, parent: this });
-        var position = options.position || this.children.length;
+        position = typeof position !== 'undefined' ? position : this.children.length;
 
         this.children.splice(position, 0, child);
         return child;
@@ -121,7 +121,9 @@ TreeNode.prototype = {
         var newParent = new TreeNode({ type: options.type, head: options.head, options: this.options, parent: this.parent });
 
         // replace the parent's child
-        this.parent.children[this.parent.children.indexOf(this)] = newParent;
+        if(this.parent) {
+            this.parent.children[this.parent.children.indexOf(this)] = newParent;
+        }
         this.parent = newParent;
         newParent.children = [this];
 

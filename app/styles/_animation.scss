@@ -1,9 +1,15 @@
 $transition: 0.15s ease-out;
 
-.sprouts-menu,
+.sprouts-menu li,
+[data-action],
 input,
 button,
 p,
 svg * {
-	transition: all $transition;
+	transition: color $transition,
+		background-color $transition,
+		border-color $transition,
+		fill $transition,
+		opacity $transition,
+		transform $transition;
 }

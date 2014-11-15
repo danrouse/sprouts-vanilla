@@ -6,6 +6,8 @@
     background-color: $green;
     font-size: 105%;
     letter-spacing: 1px;
+    white-space: nowrap;
+    overflow: hidden;
     
     &:focus {
         background-color: $white;
@@ -27,7 +29,7 @@
 }
 
 .sprouts-menu {
-    display: none;
+    //display: none;
     position: absolute;
     top: 0;
     left: 0;
@@ -45,14 +47,31 @@
             text-align: center;
             overflow: hidden;
             background-color: $green;
+            color: $brown;
             border-radius: 1em;
             border: ($border / 4) solid $brown;
+            transform: rotate(0deg) translateY(0) rotate(0deg);
 
             &:hover {
                 background-color: $green2;
+                color: $brown2;
                 cursor: pointer;
             }
-            
+        }
+    }
+            svg {
+                width: 100%;
+                height: 100%;
+                padding: 0.25em;
+                margin-top: 0.05em;
+                fill: currentColor;
+            }
+
+    &.active {
+        display: block;
+        opacity: 1;
+
+        li {
             // align buttons around a circle
             $rotation: 0;
             @for $i from 1 through 8 {
@@ -62,11 +81,6 @@
                 $rotation: $rotation + (360/8);
             }
         }
-    }
-
-    &.active {
-        display: block;
-        opacity: 1;
     }
 }
 
