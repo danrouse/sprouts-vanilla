@@ -210,7 +210,7 @@ UserInterface.prototype = {
      ********************************/
 
     /**
-     * Adds a new child directly below the selected node.
+     * Adds a new node as a child directly below the selection
      * 
      * @method addChild
      **/
@@ -221,7 +221,7 @@ UserInterface.prototype = {
     },
 
     /**
-     * Adds a new child as the leftmost child of the selected node
+     * Adds a new node as the leftmost child of the selection
      *
      * @method addChildLeft
      */
@@ -231,7 +231,7 @@ UserInterface.prototype = {
     },
 
     /**
-     * Adds a new child as the rightmost child of the selected node
+     * Adds a new node as the rightmost child of the selection
      *
      * @method addChildRight
      */
@@ -242,7 +242,31 @@ UserInterface.prototype = {
     },
 
     /**
-     * Adds a parent above the selected node.
+     * Adds a new node as a sibling to the left of the selection
+     *
+     * @method addSiblingLeft
+     */
+    addSiblingLeft: function() {
+        var sel = this.selectedNode,
+            index = sel.parent.children.indexOf(sel),
+            child = sel.parent.addChild('XP', index);
+        this.select(child, true, true, true);
+    },
+
+    /**
+     * Adds a new node as a sibling to the right of the selection
+     *
+     * @method addSiblingRight
+     */
+    addSiblingRight: function() {
+        var sel = this.selectedNode,
+            index = sel.parent.children.indexOf(sel),
+            child = sel.parent.addChild('XP', index + 1);
+        this.select(child, true, true, true);
+    },
+
+    /**
+     * Adds a node as a new parent above the selection
      * 
      * @method addParent
      **/
