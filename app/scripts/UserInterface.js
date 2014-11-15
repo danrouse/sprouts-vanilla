@@ -365,6 +365,7 @@ UserInterface.prototype = {
 
         // update hash string
         window.history.replaceState(text, null, '#' + text);
+        document.getElementById('sprouts-permalink').href = '#' + text;
 
         // bind UI events
         _listen(svg, 'click', this.handleSVGClick.bind(this));
