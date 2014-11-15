@@ -35,7 +35,7 @@
                 Settings
             </h2>
 
-            <h3 class="collapsible" data-action="collapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Tree settings</h3>
+            <h3 class="collapsible" data-action="toggleCollapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Tree settings</h3>
             <ul class="settings">
                 <li>
                     <label for="settings_linePadding">
@@ -46,7 +46,7 @@
                 <li>
                     <label for="settings_lineWidth">
                         <svg class="icon"><use xlink:href="#icon-width" /></svg>
-                        Line width</label
+                        Line thickness</label
                     ><input name="settings_lineWidth" type="number" class="setting">
                 </li>
                 <li>
@@ -63,7 +63,7 @@
                 </li>
             </ul>
 
-            <h3 class="collapsible" data-action="collapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Node settings</h3>
+            <h3 class="collapsible" data-action="toggleCollapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Node settings</h3>
             <ul class="settings">
                 <li>
                     <label for="settings_nodeSpacingY">
@@ -101,7 +101,7 @@
                 </li>
             </ul>
 
-            <h3 class="collapsible" data-action="collapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Head settings</h3>
+            <h3 class="collapsible" data-action="toggleCollapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Head settings</h3>
             <ul class="settings">
                 <li>
                     <label for="settings_headLines">
@@ -141,6 +141,12 @@
 
         <section class="main" id="main">
             <nav class="toolbar">
+                <button data-action="newTree">
+                    <svg class="icon"><use xlink:href="#icon-plus" /></svg>
+                    New Tree</button>
+                <button data-action="showLoadMenu">
+                    <svg class="icon"><use xlink:href="#icon-open" /></svg>
+                    Open Tree</button>
                 <button data-action="saveSVG">
                     <svg class="icon"><use xlink:href="#icon-save" /></svg>
                     Save SVG</button>
@@ -150,9 +156,10 @@
             </nav>
             
             <p class="sprouts-text" id="sprouts-text" contenteditable="true" tabindex="0"></p>
+            <div class="sprouts-load-menu" id="sprouts-load-menu">Load a file</div>
             <div class="sprouts-tree" id="sprouts-tree"></div>
             
-            <nav class="sprouts-menu" id="sprouts-menu">
+            <nav class="sprouts-action-menu" id="sprouts-action-menu">
                 <ul>
                     <li data-action="addParent"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
                     <li data-action="removeNode"><svg class="icon"><use xlink:href="#icon-minus" /></svg></li>

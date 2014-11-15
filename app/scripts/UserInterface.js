@@ -20,30 +20,37 @@ var UserInterface = function(rootNode) {
     /**
      * DOM element containing the tree SVG
      *
-     * @property treeElement {Element}
+     * @property treeElement {HTMLElement}
      **/
     this.treeElement = document.getElementById('sprouts-tree');
 
     /**
      * DOM element containing the bracketed text representation of the tree
      *
-     * @property treeElement {Element}
+     * @property treeElement {HTMLElement}
      **/
     this.textElement = document.getElementById('sprouts-text');
 
     /**
      * DOM element containing the node actions menu
      *
-     * @property treeElement {Element}
+     * @property treeElement {HTMLElement}
      **/
-    this.menuElement = document.getElementById('sprouts-menu');
+    this.actionMenuElement = document.getElementById('sprouts-action-menu');
 
     /**
      * whether the menu is visible or not
      *
-     * @property menuVisible {Boolean}
+     * @property actionMenuVisible {Boolean}
      **/
-    this.menuVisible = false;
+    this.actionMenuVisible = false;
+
+    /**
+     * DOM element containing the load file menu
+     *
+     * @property loadMenuElement {HTMLElement}
+     **/
+    this.loadMenuElement = document.getElementById('sprouts-load-menu');
 
     /**
      * node to move. Next node selected will be target.
@@ -104,8 +111,8 @@ UserInterface.prototype = {
         this.selectedNode = targetNode || this.tree;
 
         // move menu to new selection
-        if(this.menuVisible) {
-            this.showMenu();
+        if(this.actionMenuVisible) {
+            this.showActionMenu();
         }
 
         // update selected text area
@@ -311,7 +318,7 @@ UserInterface.prototype = {
             this.nodeToMove = target;
             target.svg._attrs({ 'class': 'moving' });
 
-            this.hideMenu();
+            this.hideActionMenu();
         } else {
             if(!target.coreference) {
                 target.coreferenceName = '';
@@ -325,7 +332,7 @@ UserInterface.prototype = {
 
 
     /********************************
-     * OUTPUT GENERATORS
+     * OUTPUT AND FILE I/O
      ********************************/
 
     /**
@@ -351,12 +358,21 @@ UserInterface.prototype = {
         }
 
         // reposition menu
-        if(this.menuVisible) {
-            this.showMenu();
+        if(this.actionMenuVisible) {
+            this.showActionMenu();
         }
 
         // bind UI events
         _listen(svg, 'click', this.handleSVGClick.bind(this));
+    },
+
+    /**
+     * Makes a fresh new tree
+     */
+    newTree: function() {
+        //this.saveLocal();
+        this.tree = new TreeNode({ fromString: '[XP]', options: this.tree.options });
+        this.select(this.tree, true, true, false);
     },
 
     /**
@@ -369,6 +385,7 @@ UserInterface.prototype = {
             svg = this.tree.svg,
             xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + svg.offsetWidth +
                 '" height="' + svg.offsetHeight + '">' + svg.innerHTML + '</svg>';
+        this.saveLocal(slug);
 
         // make slug filename-friendly
         slug = slug.toLowerCase().replace(/\s+/g, '-').substr(0,32);
@@ -383,11 +400,57 @@ UserInterface.prototype = {
      **/
     savePNG: function() {
         var slug = this.tree.toString(true);
+        this.saveLocal(slug);
 
         // make slug filename-friendly
         slug = slug.toLowerCase().replace(/\s+/g, '-').substr(0,32);
 
         _download(this.tree.toPNG(), 'sprouts-' + slug + '.png');
+    },
+
+    /**
+     * Saves bracketed text strings to local storage
+     * 
+     * @method saveLocal
+     * @param {String} filename
+     **/
+    saveLocal: function(filename) {
+        var trees = JSON.parse(window.localStorage.getItem('trees')) || {},
+            tree = this.tree.toString(),
+            dupeKey = 2;
+        filename = filename || this.tree.toString(true);
+        
+        // check for dupes
+        if(trees[filename]) {
+            if(trees[filename] === tree) {
+                // total dupe, noop
+                return;
+            } 
+            // append number to filename (2)
+            var newFilename;
+            do {
+                newFilename = filename + ' (' + dupeKey + ')';
+                dupeKey++;
+            } while(trees[newFilename]);
+
+            filename = newFilename;
+        }
+
+        // update and save
+        trees[filename] = tree;
+        window.localStorage.setItem('trees', JSON.stringify(trees));
+    },
+
+    /**
+     * Loads a tree from local storage
+     * @param  {String} filename    tree to load
+     * @return {TreeNode} tree      loaded TreeNode
+     */
+    loadLocal: function(filename) {
+        var trees = JSON.parse(window.localStorage.getItem('trees')) || {};
+        if(trees[filename]) {
+            return new TreeNode({ fromString: trees[filename], options: this.tree.options });
+        }
     },
 
 
@@ -419,27 +482,25 @@ UserInterface.prototype = {
      * 
      * @method toggleCollapsible
      **/
-    toggleCollapsible: function() {
+    toggleCollapsible: function(event) {
+        var target = event.target;
+
         // dataset won't hold true booleans
-        if(this.dataset.collapsed !== 'true') {
-            console.log('hiding');
-            this.nextElementSibling.style.display = 'none';
-            this.dataset.collapsed = 'true';
-            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-plus');
+        if(target.dataset.collapsed !== 'true') {
+            target.nextElementSibling.style.display = 'none';
+            target.dataset.collapsed = 'true';
+            target.firstChild.firstChild.setAttribute('xlink:href', '#icon-plus');
         } else {
-            console.log('showing');
-            this.nextElementSibling.style.display = 'block';
-            this.dataset.collapsed = false;
-            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-minus');
+            target.nextElementSibling.style.display = 'block';
+            target.dataset.collapsed = false;
+            target.firstChild.firstChild.setAttribute('xlink:href', '#icon-minus');
         }
     },
 
     /**
      * Shows the popup node actions menu
-     *
-     * @method showMenu
      **/
-    showMenu: function() {
+    showActionMenu: function() {
         var sel = this.selectedNode,
             label = sel.svg.querySelector('.sprouts__label:first-of-type'),
             pos = label.getBoundingClientRect();
@@ -455,30 +516,60 @@ UserInterface.prototype = {
             'addSiblingRight': sel.parent
         }
         for(var rule in rules) {
-            this.menuElement.querySelector('[data-action="' + rule + '"]').style.display = (rules[rule]) ? 'block' : 'none';
+            this.actionMenuElement.querySelector('[data-action="' + rule + '"]').style.display = (rules[rule]) ? 'block' : 'none';
         }
 
         // place over label
-        this.menuElement.style.transform = 'translateX(' + pos.left + 'px) ' +
+        this.actionMenuElement.style.transform = 'translateX(' + pos.left + 'px) ' +
             'translateY(' + pos.top + 'px)';
 
         // replay the active animation
-        this.menuElement.className = 'sprouts-menu';
+        this.actionMenuElement.classList.remove('active');
         setTimeout(function() {
-            this.menuElement.className = 'sprouts-menu active'
+            this.actionMenuElement.classList.add('active');
         }.bind(this), 50);
 
-        this.menuVisible = true;
+        this.actionMenuVisible = true;
     },
 
     /**
      * Hides the popup node actions menu
      *
-     * @method hideMenu
+     * @method hideActionMenu
      **/
-    hideMenu: function() {
-        this.menuElement.className = 'sprouts-menu';
-        this.menuVisible = false;
+    hideActionMenu: function() {
+        this.actionMenuElement.classList.remove('active');
+        this.actionMenuVisible = false;
+    },
+
+    /**
+     * Shows a list of trees saved in localStorage to load
+     */
+    showLoadMenu: function() {
+        var list = document.createElement('select'),
+            oldList = this.loadMenuElement.querySelector('select'),
+            trees = JSON.parse(window.localStorage.getItem('trees')) || {};
+
+        // populate list
+        var dotdotdot = document.createElement('option');
+        dotdotdot.text = '...';
+        list.appendChild(dotdotdot);
+
+        for(var filename in trees) {
+            var option = document.createElement('option');
+            option.value = option.text = filename;
+            list.appendChild(option);
+        }
+
+        // listen to the list, padawan!
+        _listen(list, 'change', this.handleLoadFile.bind(this));
+
+        // remove old list
+        if(oldList) { this.loadMenuElement.removeChild(oldList); }
+
+        // add and show
+        this.loadMenuElement.appendChild(list);
+        this.loadMenuElement.classList.add('active');
     },
 
     
@@ -502,6 +593,8 @@ UserInterface.prototype = {
         // get target action
         var action = this[target.dataset.action];
         if(typeof action === 'function') {
+            // hide the menu and execute the action
+            this.hideActionMenu();
             action.bind(this)(event, target);
         } else {
             console.log('unknown action', target.dataset.action);
@@ -524,7 +617,7 @@ UserInterface.prototype = {
 
         // clicks outside deselect
         if(target === event.target && !target.treeNode.parent) {
-            this.hideMenu();
+            this.hideActionMenu();
         } else {
             // finish movement or select the node
             if(this.nodeToMove) {
@@ -535,7 +628,7 @@ UserInterface.prototype = {
             }
 
             // show menu
-            this.showMenu();
+            this.showActionMenu();
         }
     },
 
@@ -629,7 +722,7 @@ UserInterface.prototype = {
             case 40: this.traverseDown(); break;
 
             // esc key
-            case 27: this.hideMenu(); break;
+            case 27: this.hideActionMenu(); break;
 
             // enter key
             case 13: this.addChild(); break;
@@ -661,8 +754,8 @@ UserInterface.prototype = {
      **/
     handleResize: function(event) {
         // move absolutely positioned menu
-        if(this.menuVisible) {
-            this.showMenu();
+        if(this.actionMenuVisible) {
+            this.showActionMenu();
         }
     },
 
@@ -713,6 +806,17 @@ UserInterface.prototype = {
 
         // redraw tree if changed
         this.draw();
+    },
+
+    /**
+     * Loads a file from a select element using loadLocal()
+     */
+    handleLoadFile: function(event) {
+        if(event.target.value !== '...') {
+            var tree = this.loadLocal(event.target.value);
+            this.tree = tree;
+            this.select(tree, true, true, false);
+        }
     },
 
 

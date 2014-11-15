@@ -332,7 +332,11 @@ TreeNode.prototype = {
             }
         } else if(this.head.length) {
             // add head
-            out += ' ' + (highlight ? '<span class="head">' + this.head + '</span>' : this.head);
+            var head = this.head;
+            if(headsOnly) {
+                head = head.replace(/^\^/, '');
+            }
+            out += ' ' + (highlight ? '<span class="head">' + head + '</span>' : head);
         }
 
         return headsOnly ? out.trim() : '[' + out + ']';
@@ -454,6 +458,11 @@ TreeNode.prototype = {
                       options.lazyTriangles) {
                 // lazy triangles triggered for any node ending in P
                 hasConnector = hasTriangle = true;
+            }
+
+            // no connectors for traces
+            if(this.isTrace) {
+                hasConnector = hasTriangle = false;
             }
 
             // create and measure head

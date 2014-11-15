@@ -24,12 +24,27 @@
     }
 }
 
+.sprouts-load-menu {
+    padding: $padding;
+    border-bottom: ($border / 2) solid $brown;
+    background-color: $tan2;
+    display: none;
+
+    select {
+        min-width: 50%;
+        margin: (-$padding) $padding;
+    }
+
+    &.active {
+        display: block;
+    }
+}
+
 .sprouts-tree {
     padding: $padding * 2;
 }
 
-.sprouts-menu {
-    //display: none;
+.sprouts-action-menu {
     position: absolute;
     top: 0;
     left: 0;
@@ -68,9 +83,7 @@
             }
 
     &.active {
-        display: block;
         opacity: 1;
-
         li {
             // align buttons around a circle
             $rotation: 0;
