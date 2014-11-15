@@ -45,6 +45,13 @@ var TreeNode = function(options) {
     this.coreference = null;
 
     /**
+     * coreference name
+     *
+     * @property coreferenceName {String}
+     **/
+    this.coreferenceName = '';
+
+    /**
      * whether this node is a moved trace
      *
      * @property isTrace {Boolean}
@@ -105,6 +112,11 @@ TreeNode.prototype = {
      * @param position {Number} child index to insert to
      **/
     moveTo: function(targetNode, position) {
+        // add a coreference name
+        if(!this.coreferenceName.length) {
+            this.coreferenceName = 'i';
+        }
+
         // save a trace and move to target
         var trace = Object.create(this),
             parent = this.parent;
@@ -185,22 +197,43 @@ TreeNode.prototype = {
         var currentObject,
             currentPhrase = '',
             currentHead = '',
+            coreferences = {},
             trackPhrase = true;
 
         for(var i=0; i<text.length; i++) {
+            var coreference = false;
+
             // make a new phrase if necessary
             if(trackPhrase && currentPhrase.length &&
                (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
                 currentPhrase = currentPhrase.trim();
                 currentHead = currentHead.trim();
 
+                var underscorePos = currentPhrase.lastIndexOf('_');
+                if(underscorePos !== -1) {
+                    coreference = currentPhrase.substr(underscorePos + 1);
+                    currentPhrase = currentPhrase.substr(0, underscorePos);
+                }
+
                 // create root if we need to
                 var newObject = currentObject ?
                         currentObject.addChild({ type: currentPhrase, head: currentHead }) :
                         new TreeNode({ type: currentPhrase, head: currentHead, options: this.options, parent: this.parent });
 
+                if(coreference) {
+                    if(coreferences[coreference]) {
+                        // both references are found, link them
+                        newObject.coreference = coreferences[coreference];
+                        coreferences[coreference].coreference = newObject;
+                    }
+
+                    coreferences[coreference] = newObject;
+                    newObject.coreferenceName = coreference;
+                }
+
                 currentObject = newObject;
                 currentPhrase = '';
+                currentHead = '';
             }
 
             if(text[i] === '[') {
@@ -211,6 +244,9 @@ TreeNode.prototype = {
                 // bracket close, apply any captured head
                 if(currentHead.length) {
                     currentObject.head = currentHead;
+                    if(currentObject.coreference && currentHead === 't') {
+                        currentObject.isTrace = true;
+                    }
                     currentHead = '';
                 }
 
@@ -257,6 +293,10 @@ TreeNode.prototype = {
         var out = '';
         if(!headsOnly) {
             out = highlight ? '<span class="node">' + this.type + '</span>' : this.type;
+
+            if(this.coreferenceName) {
+                out += '_' + this.coreferenceName;
+            }
         }
 
         if(this.children.length) {
@@ -305,6 +345,17 @@ TreeNode.prototype = {
         // add main label
         label = _svgelem('text', { 'class': 'sprouts__label' });
         label.appendChild(document.createTextNode(this.type));
+
+        // coreference label
+        if(this.coreferenceName.length) {
+            var corefLabel = _svgelem('tspan', {
+                'baseline-shift': 'sub',
+                'font-size': '50%'
+            });
+            corefLabel.appendChild(document.createTextNode(this.coreferenceName));
+
+            label.appendChild(corefLabel);
+        }
         svg.appendChild(label);
 
         var labelBBox = svg.getBBox(),
@@ -437,7 +488,7 @@ TreeNode.prototype = {
                         y += parseFloat(ref.svg.getAttribute('y'));
                         ref = ref.parent;
                     }
-                    realCoords[j] = [x + size.width / 2, y + size.height];
+                    realCoords[j] = [x + size.width / 2, y + size.height + options.fonts.head.fontSize];
                 }
 
                 // setup arc

@@ -46,6 +46,13 @@ var UserInterface = function(rootNode) {
     this.selectedNode = null;
 
     /**
+     * coreference names in use
+     *
+     * @property coreferences {Array}
+     **/
+    this.coreferences = [];
+
+    /**
      * Available font face names
      *
      * @property fonts {Array}
@@ -306,9 +313,18 @@ UserInterface.prototype = {
     startMovement: function() {
         var target = this.selectedNode;
         if(!this.nodeToMove) {
+            if(!target.coreferenceName.length) {
+                target.coreferenceName = this.coreferences.length.toString();
+                this.coreferences.push(this.coreferences.length);
+            }
+
             this.nodeToMove = target;
             target.svg._attrs({ 'class': 'moving' });
         } else {
+            if(!target.coreference) {
+                target.coreferenceName = '';
+                this.coreferences.pop();
+            }
             this.nodeToMove = null;
             target.svg._attrs({ 'class': 'selected' });
         }

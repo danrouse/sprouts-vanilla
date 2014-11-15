@@ -33,7 +33,7 @@
 
     // make a basic tree
     var tree = new TreeNode({
-            fromString: '[VP [VP [V Draw][NP ^syntax trees]][PP [P with][NP Sprouts]]]',
+            fromString: '[VP [VP [V Draw][NP [NP_0 Sprouts][NP ^syntax trees]][PP [P with][NP_0 t]]]',
             options: defaults });
     new UserInterface(tree);
 })();
