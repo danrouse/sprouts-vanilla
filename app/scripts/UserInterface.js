@@ -46,9 +46,9 @@ var UserInterface = function(rootNode) {
     this.selectedNode = null;
 
     /**
-     * available font faces
+     * Available font face names
      *
-     * @property fonts {Array} font family names
+     * @property fonts {Array}
      **/
     this.fonts = ['Open Sans', 'Arial', 'Times New Roman', 'Impact', 'Garamond', 'Comic Sans MS', 'Courier New'];
 
@@ -60,11 +60,12 @@ UserInterface.prototype = {
      *
      * @method select
      * @param targetNode {TreeNode}
-     * @param redrawTree {Boolean} redraw the tree
+     * @param redrawTree {Boolean}
      * @param redrawText {Boolean}
+     * @param selectText {Boolean}
      * @return targetNode {TreeNode} selected node
      **/
-    select: function(targetNode, redrawTree, redrawText) {
+    select: function(targetNode, redrawTree, redrawText, selectText) {
         if(redrawTree) { this.draw(); }
 
         // remove existing selection class
@@ -89,7 +90,107 @@ UserInterface.prototype = {
             this.textElement.innerHTML = targetNode.toString(false, true);
         }
 
+        // highlight whatever we just selected
+        // var selection = window.getSelection(),
+        //     rangeBefore = selection.getRangeAt(0).startOffset;
+        // tree.select(newNode, true, false);
+        // var rangeAfter = selection.getRangeAt(0).startOffset;
+        // var targetTextNode = this.childNodes[rangeAfter],
+        //     targetRange = document.createRange();
+        // console.log('target node offset', rangeBefore, rangeAfter, targetTextNode);
+        // targetRange.selectNodeContents(targetTextNode);
+        // console.log('new range', targetTextNode.nodeType);
+        // //targetRange.setStart(targetTextNode, rangeBefore);
+        // targetRange.collapse(true);
+        // selection.removeAllRanges();
+        // selection.addRange(targetRange);
+        if(selectText) {
+            var selection = window.getSelection(),
+                range = document.createRange();
+            
+            range.setStart(this.textElement, 1);
+            range.setEnd(this.textElement, 2);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
         return targetNode;
+    },
+
+    /**
+     * Selects the current node's parent
+     *
+     * @method traverseUp
+     * @param selectText {Boolean} move the caret over the node text
+     **/
+    traverseUp: function(selectText) {
+        if(this.selectedNode.parent) {
+            this.select(this.selectedNode.parent, false, true, selectText);
+        }
+    },
+
+    /**
+     * Select the current node's middle descendant
+     *
+     * @method traverseDown
+     * @param selectText {Boolean} move the caret over the node text
+     **/
+    traverseDown: function(selectText) {
+        if(this.selectedNode.children.length) {
+            this.select(this.selectedNode.children[Math.floor(this.selectedNode.children.length / 2) - 1], false, true, selectText);
+        }
+    },
+
+    /**
+     * Select the sibling to the left of the current node
+     * If no candidates, move up.
+     *
+     * @method traverseLeft
+     * @param selectText {Boolean} move the caret over the node text
+     **/
+    traverseLeft: function(selectText) {
+        var selectedNode = this.selectedNode,
+            siblings = selectedNode.parent ? selectedNode.parent.children : null,
+            target, index;
+
+        if(siblings) {
+            index = siblings.indexOf(this.selectedNode);
+            if(index > 0) {
+                target = siblings[index - 1];
+            }
+        }
+        
+        if(target) {
+            this.select(target, false, true, selectText);
+        } else {
+            this.traverseUp(selectText);
+        }
+    },
+
+    /**
+     * Select the sibling to the right of the current node
+     * If no candidates, move down.
+     *
+     * @method traverseRight
+     * @param selectText {Boolean} move the caret over the node text
+     **/
+    traverseRight: function(selectText) {
+        var selectedNode = this.selectedNode,
+            siblings = selectedNode.parent ? selectedNode.parent.children : null,
+            index, target;
+
+        if(siblings) {
+            index = siblings.indexOf(this.selectedNode);
+            if(index < siblings.length - 1) {
+                target = siblings[index + 1];
+            }
+        }
+        
+        if(target) {
+            this.select(target, false, true, selectText);
+        } else {
+            this.traverseDown(selectText);
+        }
     },
 
     /**
@@ -116,7 +217,7 @@ UserInterface.prototype = {
 
         // bind UI events
         var that = this;
-        svg.onclick = function(event) {
+        _listen(svg, 'click', function(event) {
             // find first svg parent of click event target
             var target = event.target;
             while(target.nodeName !== 'svg') {
@@ -124,12 +225,12 @@ UserInterface.prototype = {
             }
 
             if(that.nodeToMove) {
-                that.select(that.nodeToMove.moveTo(target.treeNode), true);
+                that.select(that.nodeToMove.moveTo(target.treeNode), true, false, true);
                 that.nodeToMove = null;
             } else {
-                that.select(target.treeNode);
+                that.select(target.treeNode, false, true, true);
             }
-        };
+        });
     },
 
     /**
@@ -177,7 +278,7 @@ UserInterface.prototype = {
      **/
     addChild: function() {
         var child = this.selectedNode.addChild('XP');
-        this.select(child, true);
+        this.select(child, true, true, true);
     },
 
     /**
@@ -268,12 +369,39 @@ UserInterface.prototype = {
      * @param event {Event}
      **/
     handleTextUpdate: function(event) {
-        // check if text was really updated
+        if(event.type === 'keydown') {
+            var captured = true;
+
+            switch(event.keyCode) {
+                // arrow keys
+                case 38: this.traverseUp(true); break;
+                case 40: this.traverseDown(true); break;
+                // enter key
+                case 13: this.addChild(); break;
+                // tab key
+                case 9:
+                    if(event.shiftKey) {
+                        this.traverseLeft(true);
+                    } else {
+                        this.traverseRight(true);
+                    }
+                    break;
+
+                default: captured = false;
+            }
+            if(captured) {
+                event.preventDefault();
+            }
+            return;
+        }
+
+        // if text wasn't really updated, noop
         if(this.textElement.lastText &&
            this.textElement.lastText === this.textElement.innerText &&
            event.type !== 'blur') {
             return;
         }
+
         var parent = this.selectedNode.parent;
 
         // create new node from contents
@@ -331,64 +459,16 @@ UserInterface.prototype = {
             target, index;
 
         switch(event.keyCode) {
-            case 37:
-                // left arrow: select sibling to the left
-                if(siblings) {
-                    index = siblings.indexOf(this.selectedNode);
-                    if(index > 0) {
-                        target = siblings[index - 1];
-                    }
-                }
-                if(!target) {
-                    // select first child
-                    if(selectedNode.children.length) {
-                        target = selectedNode.children[0];
-                    }
-                }
-                
-                if(target) { this.select(target); }
-                break;
+            // arrow keys
+            case 37: this.traverseLeft(); break;
+            case 38: this.traverseUp(); break;
+            case 39: this.traverseRight(); break;
+            case 40: this.traverseDown(); break;
 
-            case 38:
-                // up arrow: select parent
-                if(selectedNode.parent) {
-                    this.select(selectedNode.parent);
-                }
-                break;
+            // enter key
+            case 13: this.addChild(); break;
 
-            case 39:
-                // right arrow: select sibling to the right
-                if(siblings) {
-                    index = siblings.indexOf(this.selectedNode);
-                    if(index < siblings.length - 1) {
-                        target = siblings[index + 1];
-                    }
-                }
-                if(!target) {
-                    // select last child
-                    if(selectedNode.children.length) {
-                        target = selectedNode.children[selectedNode.children.length - 1];
-                    }
-                }
-                
-                if(target) { this.select(target); }
-                break;
-
-            case 40:
-                // down arrow: select first child
-                if(selectedNode.children.length) {
-                    index = Math.floor(selectedNode.children.length / 2) - 1;
-                    this.select(selectedNode.children[index]);
-                }
-                break;
-
-            case 13:
-                // enter: create child
-                this.select(selectedNode.addChild('XP'), true);
-                break;
-
-            default:
-                console.log('keycode', event.keyCode);
+            default: console.log('global keycode', event.keyCode);
         }
     },
 
@@ -564,12 +644,12 @@ UserInterface.prototype = {
         _listen(document.querySelectorAll('[data-action]'), 'click', this.handleAction.bind(this));
 
         // databind the tree contents text input
-        _listen(this.textElement, 'keyup blur paste input', this.handleTextUpdate.bind(this));
+        _listen(this.textElement, 'keydown keyup paste input', this.handleTextUpdate.bind(this));
 
         // keyboard controls
         _listen(document, 'keydown', this.handleGlobalKeypress.bind(this));
 
         // select root node
-        this.select(this.tree, true);
+        this.select(this.tree, true, true, true);
     }
 };
