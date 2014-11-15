@@ -453,11 +453,6 @@ UserInterface.prototype = {
     handleGlobalKeypress: function(event) {
         if(event.target.nodeName !== 'BODY') { return; }
 
-        var selectedNode = this.selectedNode,
-            parent = selectedNode.parent,
-            siblings = parent ? parent.children : null,
-            target, index;
-
         switch(event.keyCode) {
             // arrow keys
             case 37: this.traverseLeft(); break;
@@ -650,6 +645,6 @@ UserInterface.prototype = {
         _listen(document, 'keydown', this.handleGlobalKeypress.bind(this));
 
         // select root node
-        this.select(this.tree, true, true, true);
+        this.select(this.tree, true, true, false);
     }
 };

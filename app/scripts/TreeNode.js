@@ -38,18 +38,18 @@ var TreeNode = function(options) {
     this.children = [];
 
     /**
-     * reference to initial position if moved
+     * coreferenced node
      *
-     * @property traceFrom {TreeNode}
+     * @property coreference {TreeNode}
      **/
-    this.traceFrom = null;
+    this.coreference = null;
 
     /**
-     * reference to destination position if moved
+     * whether this node is a moved trace
      *
-     * @property traceTo {TreeNode}
+     * @property isTrace {Boolean}
      **/
-    this.traceTo = null;
+    this.isTrace = false;
 
 
     var fromString = options.fromString || '';
@@ -113,10 +113,16 @@ TreeNode.prototype = {
         trace.parent = parent;
         trace.head = 't';
         trace.children = [];
+        trace.isTrace = true;
+
+        // swap existing references for multiple movements
+        if(this.coreference) {
+            this.coreference.coreference = trace;
+        }
 
         // add references
-        this.traceFrom = trace;
-        trace.traceTo = this;
+        this.coreference = trace;
+        trace.coreference = this;
         parent.children[parent.children.indexOf(this)] = trace;
 
         // adjoin to a head
@@ -125,6 +131,7 @@ TreeNode.prototype = {
         }
 
         // move to target in the tree
+        this.parent = targetNode;
         targetNode.children.splice(position || 0, 0, this);
 
         return this;
@@ -270,15 +277,21 @@ TreeNode.prototype = {
      * and all of its children
      *
      * @method toSVG
+     * @param rootNode {TreeNode} root element reference, set upon recursion
      * @return svg {SVGElement} generated SVG
      **/
-    toSVG: function() {
+    toSVG: function(rootNode) {
         var svg = _svgelem('svg'),
             options = this.options,
             lines = [],
             elemWidth = 0,
             label, head, children, line,
             i;
+
+        // return blank svg if we're ignoring traces
+        if(!options.showTraces && this.isTrace) {
+            return svg;
+        }
 
         // SVG must be rendered for getBBox to get size
         // the SVG is moved into its parent element when added
@@ -304,13 +317,8 @@ TreeNode.prototype = {
             svg.appendChild(children);
 
             for(i in this.children) {
-                // ignore traces
-                if(!options.showTraces && this.children[i].traceTo) {
-                    continue;
-                }
-
                 // generate children recursively
-                var child = this.children[i].toSVG();
+                var child = this.children[i].toSVG(rootNode || this);
                 children.appendChild(child);
                 var childWidth = child.getBBox().width;
 
@@ -347,7 +355,7 @@ TreeNode.prototype = {
             head = _svgelem('text', { 'class': 'sprouts__head' });
 
             // traces are italic
-            if(this.traceTo) {
+            if(this.isTrace) {
                 head._attrs({
                     'style': 'font-style: ' +
                         (options.fonts.head.italic ? 'normal' : 'italic') +
@@ -410,6 +418,54 @@ TreeNode.prototype = {
                 });
                 svg.appendChild(line);
             }            
+        }
+
+        // create or update lines for movement
+        if(!rootNode) {
+            // this is the root node, create the lines
+            for(i in this.corefCache) {
+                // get real x/y of each item
+                var realCoords = [];
+                for(var j in this.corefCache[i]) {
+                    var ref = this.corefCache[i][j],
+                        size = ref.svg.getBBox(),
+                        x = 0,
+                        y = 0;
+
+                    while(ref.parent) {
+                        x += parseFloat(ref.svg.getAttribute('x'));
+                        y += parseFloat(ref.svg.getAttribute('y'));
+                        ref = ref.parent;
+                    }
+                    realCoords[j] = [x + size.width / 2, y + size.height];
+                }
+
+                // setup arc
+                var sweep = (realCoords[0][0] > realCoords[1][0]) ? 1 : 0,
+                    rx = Math.abs(realCoords[0][0] - realCoords[1][0]) / 2,
+                    ry = Math.abs(realCoords[0][1] - realCoords[1][1]) || options.nodeSpacingY;
+
+                var movementLine = _svgelem('path', {
+                    'class': 'sprouts__line',
+                    'd': 'M' + realCoords[0][0] + ',' + realCoords[0][1] +
+                         //'Q' + rx + ',' + Math.max(realCoords[0][1], realCoords[1][1]) + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
+                         ' A' + rx + ',' + ry + ' 0 0,' + sweep + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
+                        // arrow
+                        ' l5,5 -5,-5 -5,5, 10,0'
+                });
+                svg.appendChild(movementLine);
+            }
+
+            // clear the cache
+            this.corefCache = [];
+        } else if(this.isTrace) {
+            // add coreferences to cache
+            if(!rootNode.corefCache) {
+                rootNode.corefCache = [];
+            }
+            rootNode.corefCache.push([this, this.coreference]);
+        } else if(this.coreference) {
+            // non-trace coreference
         }
 
         // get total width (label + children) and center label
