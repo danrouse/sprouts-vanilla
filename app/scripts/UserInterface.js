@@ -342,7 +342,8 @@ UserInterface.prototype = {
      **/
     draw: function() {
         // generate SVG
-        var svg = this.tree.toSVG();
+        var svg = this.tree.toSVG(),
+            text = this.tree.toString();
 
         // replace the element in the DOM
         if(this.treeElement.children.length) {
@@ -361,6 +362,9 @@ UserInterface.prototype = {
         if(this.actionMenuVisible) {
             this.showActionMenu();
         }
+
+        // update hash string
+        window.history.replaceState(text, null, '#' + text);
 
         // bind UI events
         _listen(svg, 'click', this.handleSVGClick.bind(this));
@@ -451,6 +455,15 @@ UserInterface.prototype = {
         if(trees[filename]) {
             return new TreeNode({ fromString: trees[filename], options: this.tree.options });
         }
+    },
+
+    /**
+     * Loads a tree from hashstring
+     * @return {TreeNode} tree      loaded TreeNode
+     */
+    loadHashstring: function() {
+        var hash = window.location.hash.substr(1);
+        return new TreeNode({ fromString: trees[filename], options: this.tree.options });
     },
 
 
@@ -781,12 +794,12 @@ UserInterface.prototype = {
     /**
      * Updates font preview.
      * 
-     * @method updateFont
+     * @method handleFontUpdate
      * @param fontPreview {HTMLElement} preview element to update
      * @param destFont {Object} font object to update
      * @param attrs {Object} attrs in the font object to update
      **/
-    updateFont: function(fontPreview, destFont, attrs) {
+    handleFontUpdate: function(fontPreview, destFont, attrs) {
         // copy attrs to destination font
         for(var key in attrs) {
             destFont[key] = attrs[key];
@@ -804,8 +817,10 @@ UserInterface.prototype = {
             (destFont.bold ? ' bold' : '') +
             (destFont.italic ? ' italic' : '');
 
-        // redraw tree if changed
-        this.draw();
+        // redraw tree
+        if(this.tree.svg) {
+            this.draw();
+        }
     },
 
     /**
@@ -816,6 +831,7 @@ UserInterface.prototype = {
             var tree = this.loadLocal(event.target.value);
             this.tree = tree;
             this.select(tree, true, true, false);
+            this.loadMenuElement.classList.remove('active');
         }
     },
 
@@ -853,7 +869,7 @@ UserInterface.prototype = {
             // update font family on list item click
             _listen(fontList, 'click', function(event) {
                 if(event.target.nodeName === 'LI') {
-                    that.updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                    that.handleFontUpdate(this.parentNode.getElementsByClassName('font-preview')[0],
                         options.fonts[this.parentNode.dataset.font],
                         { fontFamily: event.target.innerHTML });
                 }
@@ -883,22 +899,22 @@ UserInterface.prototype = {
 
             // simple event handlers for the chirrens
             selector.children.fontSize.oninput = function() {
-                that.updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                that.handleFontUpdate(this.parentNode.getElementsByClassName('font-preview')[0],
                     options.fonts[this.parentNode.dataset.font],
                     { fontSize: this.value });
             };
             selector.children.color.onchange = function() {
-                that.updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                that.handleFontUpdate(this.parentNode.getElementsByClassName('font-preview')[0],
                     options.fonts[this.parentNode.dataset.font],
                     { color: this.value });
             };
             selector.children.bold.onchange = function() {
-                that.updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                that.handleFontUpdate(this.parentNode.getElementsByClassName('font-preview')[0],
                     options.fonts[this.parentNode.dataset.font],
                     { bold: this.checked });
             };
             selector.children.italic.onchange = function() {
-                that.updateFont(this.parentNode.getElementsByClassName('font-preview')[0],
+                that.handleFontUpdate(this.parentNode.getElementsByClassName('font-preview')[0],
                     options.fonts[this.parentNode.dataset.font],
                     { italic: this.checked });
             };
@@ -908,7 +924,7 @@ UserInterface.prototype = {
             selector.children.color.value = destFont.color;
             selector.children.bold.checked = destFont.bold;
             selector.children.italic.checked = destFont.italic;
-            this.updateFont(fontPreview, destFont);
+            this.handleFontUpdate(fontPreview, destFont);
         }
     },
 

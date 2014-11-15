@@ -31,9 +31,12 @@
         showTraces: true
     };
 
+    var sampleSentence = '[VP [VP [V Draw][NP [NP_0 Sprouts][NP ^syntax trees]][PP [P with][NP_0 t]]]';
+
     // make a basic tree
+    var hash = window.location.hash.substr(1);
     var tree = new TreeNode({
-            fromString: '[VP [VP [V Draw][NP [NP_0 Sprouts][NP ^syntax trees]][PP [P with][NP_0 t]]]',
+            fromString: hash || sampleSentence,
             options: defaults }),
         UI = new UserInterface(tree);
 })();

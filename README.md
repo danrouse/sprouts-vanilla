@@ -4,7 +4,8 @@
  - Build trees from text or interactively, with the GUI tree editor
  - Supports syntactic movement, coreference
  - Full Unicode support
- - Export as SVG or PNG
+ - Export SVG or PNG images, or shareable links
+ - Load previously saved trees
  
 
 Usage
