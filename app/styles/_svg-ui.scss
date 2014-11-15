@@ -23,15 +23,60 @@
 }
 
 .sprouts-tree {
-    padding: $padding;
+    padding: $padding * 2;
 }
 
+.sprouts-menu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+
+    ul {
+        position: relative;
+
+        li {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2em;
+            height: 2em;
+            text-align: center;
+            overflow: hidden;
+            background-color: $green;
+            border-radius: 1em;
+            border: ($border / 4) solid $brown;
+
+            &:hover {
+                background-color: $green2;
+                cursor: pointer;
+            }
+            
+            // align buttons around a circle
+            $rotation: 0;
+            @for $i from 1 through 8 {
+                &:nth-of-type(#{$i}) {
+                    transform: rotate(#{$rotation}deg) translateY(-4em) rotate(-#{$rotation}deg);
+                }
+                $rotation: $rotation + (360/8);
+            }
+        }
+    }
+
+    &.active {
+        display: block;
+        opacity: 1;
+    }
+}
+
+// inner SVG styles
 svg.selected {
-	> .sprouts__label {
-		fill: $blue;
-		stroke: $brown;
-		stroke-width: 1px;
-	}
+    > .sprouts__label {
+        fill: $blue;
+        stroke: $brown;
+        stroke-width: 1px;
+    }
 }
 svg.moving {
     > .sprouts__label {
@@ -44,9 +89,9 @@ svg.moving {
 
 .sprouts__label:hover,
 .sprouts__head:hover {
-	cursor: pointer;
-	fill: $green;
-	stroke: darken($green, 10%);
-	stroke-width: 1px;
-	text-shadow: 0 0 $padding $green;
+    cursor: pointer;
+    fill: $green;
+    stroke: darken($green, 10%);
+    stroke-width: 1px;
+    text-shadow: 0 0 $padding $green;
 }

@@ -105,6 +105,30 @@ TreeNode.prototype = {
     },
 
     /**
+     * Creates a new TreeNode as a parent of this
+     * Moves existing parents up
+     *
+     * @method addParent
+     * @param options {Object}
+     * @return newParent {TreeNode}
+     **/
+    addParent: function(options) {
+        // allow just phrase name to be passed instead of options
+        if(typeof options === 'string') {
+            options = { type: options, head: '' };
+        }
+
+        var newParent = new TreeNode({ type: options.type, head: options.head, options: this.options, parent: this.parent });
+
+        // replace the parent's child
+        this.parent.children[this.parent.children.indexOf(this)] = newParent;
+        this.parent = newParent;
+        newParent.children = [this];
+
+        return newParent;
+    },
+
+    /**
      * moves a node into another, leaving a trace
      *
      * @method moveTo

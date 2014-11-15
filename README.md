@@ -1,10 +1,11 @@
 # sprouts
 
  - Draw syntax trees in the browser
- - Build tree from strings
+ - Build trees from text or interactively, with the GUI tree editor
+ - Supports syntactic movement, coreference
  - Full Unicode support
  - Export as SVG or PNG
-
+ 
 
 Usage
 -----

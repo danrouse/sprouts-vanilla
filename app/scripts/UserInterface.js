@@ -32,6 +32,20 @@ var UserInterface = function(rootNode) {
     this.textElement = document.getElementById('sprouts-text');
 
     /**
+     * DOM element containing the node actions menu
+     *
+     * @property treeElement {Element}
+     **/
+    this.menuElement = document.getElementById('sprouts-menu');
+
+    /**
+     * whether the menu is visible or not
+     *
+     * @property menuVisible {Boolean}
+     **/
+    this.menuVisible = false;
+
+    /**
      * node to move. Next node selected will be target.
      *
      * @property nodeToMove {TreeNode}
@@ -62,6 +76,11 @@ var UserInterface = function(rootNode) {
     this.init();
 };
 UserInterface.prototype = {
+
+    /********************************
+     * TREE TRAVERSAL
+     ********************************/
+
     /**
      * Selects a node in the tree.
      *
@@ -82,14 +101,11 @@ UserInterface.prototype = {
 
         // select target node
         targetNode.svg._attrs({'class': 'selected'});
-        this.selectedNode = targetNode;
+        this.selectedNode = targetNode || this.tree;
 
-        // update UI action buttons
-        // TODO: make a better system for this
-        if(targetNode.parent) {
-            document.getElementById('button-startMovement').style.display = 'block';
-        } else {
-            document.getElementById('button-startMovement').style.display = 'none';
+        // move menu to new selection
+        if(this.menuVisible) {
+            this.showMenu();
         }
 
         // update selected text area
@@ -98,19 +114,6 @@ UserInterface.prototype = {
         }
 
         // highlight whatever we just selected
-        // var selection = window.getSelection(),
-        //     rangeBefore = selection.getRangeAt(0).startOffset;
-        // tree.select(newNode, true, false);
-        // var rangeAfter = selection.getRangeAt(0).startOffset;
-        // var targetTextNode = this.childNodes[rangeAfter],
-        //     targetRange = document.createRange();
-        // console.log('target node offset', rangeBefore, rangeAfter, targetTextNode);
-        // targetRange.selectNodeContents(targetTextNode);
-        // console.log('new range', targetTextNode.nodeType);
-        // //targetRange.setStart(targetTextNode, rangeBefore);
-        // targetRange.collapse(true);
-        // selection.removeAllRanges();
-        // selection.addRange(targetRange);
         if(selectText) {
             var selection = window.getSelection(),
                 range = document.createRange();
@@ -200,92 +203,30 @@ UserInterface.prototype = {
         }
     },
 
-    /**
-     * Generates a new SVG of the tree and inserts it in the DOM.
-     *
-     * @method draw
-     **/
-    draw: function() {
-        // generate SVG
-        var svg = this.tree.toSVG();
 
-        // replace the element in the DOM
-        if(this.treeElement.children.length) {
-            this.treeElement.removeChild(this.treeElement.firstChild);
-        }
-        this.treeElement.appendChild(svg);
 
-        // reapply UI styles
-        if(this.nodeToMove) {
-            this.nodeToMove.svg._attrs({'class': 'moving'});
-        } else if(this.selectedNode) {
-            this.selectedNode.svg._attrs({'class': 'selected'});
-        }
-
-        // bind UI events
-        var that = this;
-        _listen(svg, 'click', function(event) {
-            // find first svg parent of click event target
-            var target = event.target;
-            while(target.nodeName !== 'svg') {
-                target = target.parentNode;
-            }
-
-            if(that.nodeToMove) {
-                that.select(that.nodeToMove.moveTo(target.treeNode), true, false, true);
-                that.nodeToMove = null;
-            } else {
-                that.select(target.treeNode, false, true, true);
-            }
-        });
-    },
+    /********************************
+     * TREE BUILDING
+     ********************************/
 
     /**
-     * Shows or hides the sidebar.
-     * 
-     * @method toggleSidebar
-     * @param event {Event} click event
-     * @param target
-     **/
-    toggleSidebar: function(event, target) {
-        var sidebar = document.getElementById('sidebar');
-        if(sidebar.className === 'sidebar collapsed') {
-            sidebar.className = 'sidebar';
-            target.firstElementChild.firstElementChild.setAttribute('xlink:href', '#icon-left');
-        } else {
-            sidebar.className = 'sidebar collapsed';
-            target.firstElementChild.firstElementChild.setAttribute('xlink:href', '#icon-right');
-        }
-    },
-
-    /**
-     * Toggles visibility a collapsible settings group.
-     * 
-     * @method toggleCollapsible
-     **/
-    toggleCollapsible: function() {
-        // dataset won't hold true booleans
-        if(this.dataset.collapsed !== 'true') {
-            console.log('hiding');
-            this.nextElementSibling.style.display = 'none';
-            this.dataset.collapsed = 'true';
-            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-plus');
-        } else {
-            console.log('showing');
-            this.nextElementSibling.style.display = 'block';
-            this.dataset.collapsed = false;
-            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-minus');
-        }
-    },
-
-    /**
-     * Adds a new child under the selected node.
+     * Adds a new child directly below the selected node.
      * 
      * @method addChild
      **/
     addChild: function() {
         var child = this.selectedNode.addChild('XP');
         this.select(child, true, true, true);
+    },
+
+    /**
+     * Adds a parent above the selected node.
+     * 
+     * @method addParent
+     **/
+    addParent: function() {
+        var parent = this.selectedNode.addParent('XP');
+        this.select(parent, true, true, true);
     },
 
     /**
@@ -330,6 +271,43 @@ UserInterface.prototype = {
         }
     },
 
+
+
+    /********************************
+     * OUTPUT GENERATORS
+     ********************************/
+
+    /**
+     * Generates a new SVG of the tree and inserts it in the DOM.
+     *
+     * @method draw
+     **/
+    draw: function() {
+        // generate SVG
+        var svg = this.tree.toSVG();
+
+        // replace the element in the DOM
+        if(this.treeElement.children.length) {
+            this.treeElement.removeChild(this.treeElement.firstChild);
+        }
+        this.treeElement.appendChild(svg);
+
+        // reapply UI styles
+        if(this.nodeToMove) {
+            this.nodeToMove.svg._attrs({'class': 'moving'});
+        } else if(this.selectedNode) {
+            this.selectedNode.svg._attrs({'class': 'selected'});
+        }
+
+        // reposition menu
+        if(this.menuVisible) {
+            this.showMenu();
+        }
+
+        // bind UI events
+        _listen(svg, 'click', this.handleSVGClick.bind(this));
+    },
+
     /**
      * Triggers a download of an SVG image of the current tree.
      * 
@@ -361,6 +339,82 @@ UserInterface.prototype = {
         _download(this.tree.toPNG(), 'sprouts-' + slug + '.png');
     },
 
+
+
+    /********************************
+     * ELEMENT TOGGLERS
+     ********************************/
+
+    /**
+     * Shows or hides the sidebar.
+     * 
+     * @method toggleSidebar
+     * @param event {Event} click event
+     * @param target
+     **/
+    toggleSidebar: function(event, target) {
+        var sidebar = document.getElementById('sidebar');
+        if(sidebar.className === 'sidebar collapsed') {
+            sidebar.className = 'sidebar';
+            target.firstElementChild.firstElementChild.setAttribute('xlink:href', '#icon-left');
+        } else {
+            sidebar.className = 'sidebar collapsed';
+            target.firstElementChild.firstElementChild.setAttribute('xlink:href', '#icon-right');
+        }
+    },
+
+    /**
+     * Toggles visibility a collapsible settings group.
+     * 
+     * @method toggleCollapsible
+     **/
+    toggleCollapsible: function() {
+        // dataset won't hold true booleans
+        if(this.dataset.collapsed !== 'true') {
+            console.log('hiding');
+            this.nextElementSibling.style.display = 'none';
+            this.dataset.collapsed = 'true';
+            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-plus');
+        } else {
+            console.log('showing');
+            this.nextElementSibling.style.display = 'block';
+            this.dataset.collapsed = false;
+            this.firstChild.firstChild.setAttribute('xlink:href', '#icon-minus');
+        }
+    },
+
+    /**
+     * Shows the popup node actions menu
+     *
+     * @method showMenu
+     **/
+    showMenu: function() {
+        var label = this.selectedNode.svg.querySelector('.sprouts__label:first-of-type'),
+            pos = label.getBoundingClientRect();
+        //this.menuElement.style.left = (pos.left) + 'px';
+        //this.menuElement.style.top = (pos.top) + 'px';
+        this.menuElement.className = 'sprouts-menu active';
+        this.menuElement.style.transform = 'translateX(' + pos.left + 'px) ' +
+                'translateY(' + pos.top + 'px)';
+        this.menuVisible = true;
+    },
+
+    /**
+     * Hides the popup node actions menu
+     *
+     * @method hideMenu
+     **/
+    hideMenu: function() {
+        this.menuElement.className = 'sprouts-menu';
+        this.menuVisible = false;
+    },
+
+    
+
+    /********************************
+     * EVENT HANDLERS
+     ********************************/
+
     /**
      * Calls the UI method from the data-action attribute
      * of an element. Click handler.
@@ -375,7 +429,42 @@ UserInterface.prototype = {
         }
         // get target action
         var action = this[target.dataset.action];
-        if(typeof action === 'function') { action.bind(this)(event, target); }
+        if(typeof action === 'function') {
+            action.bind(this)(event, target);
+        } else {
+            console.log('unknown action', target.dataset.action);
+        }
+    },
+
+    /**
+     * Handles clicks from inside the SVG element
+     *
+     * @method handleSVGClick
+     * @param event {Event}
+     **/
+    handleSVGClick: function(event) {
+        // find first svg parent of click event target
+        var target = event.target;
+
+        while(target.nodeName !== 'svg') {
+            target = target.parentNode;
+        }
+
+        // clicks outside deselect
+        if(target === event.target && !target.treeNode.parent) {
+            this.hideMenu();
+        } else {
+            // finish movement or select the node
+            if(this.nodeToMove) {
+                this.select(this.nodeToMove.moveTo(target.treeNode), true, false, true);
+                this.nodeToMove = null;
+            } else {
+                this.select(target.treeNode, false, true, true);
+            }
+
+            // show menu
+            this.showMenu();
+        }
     },
 
     /**
@@ -385,32 +474,6 @@ UserInterface.prototype = {
      * @param event {Event}
      **/
     handleTextUpdate: function(event) {
-        if(event.type === 'keydown') {
-            var captured = true;
-
-            switch(event.keyCode) {
-                // arrow keys
-                case 38: this.traverseUp(true); break;
-                case 40: this.traverseDown(true); break;
-                // enter key
-                case 13: this.addChild(); break;
-                // tab key
-                case 9:
-                    if(event.shiftKey) {
-                        this.traverseLeft(true);
-                    } else {
-                        this.traverseRight(true);
-                    }
-                    break;
-
-                default: captured = false;
-            }
-            if(captured) {
-                event.preventDefault();
-            }
-            return;
-        }
-
         // if text wasn't really updated, noop
         if(this.textElement.lastText &&
            this.textElement.lastText === this.textElement.innerText &&
@@ -461,7 +524,38 @@ UserInterface.prototype = {
     },
 
     /**
-     * Handles keyboard control.
+     * Handles keyboard control within the textarea
+     * 
+     * @method handleTextKeypress
+     * @param event {Event}
+     **/
+    handleTextKeypress: function(event) {
+        var captured = true;
+
+        switch(event.keyCode) {
+            // arrow keys
+            case 38: this.traverseUp(true); break;
+            case 40: this.traverseDown(true); break;
+            // enter key
+            case 13: this.addChild(); break;
+            // tab key
+            case 9:
+                if(event.shiftKey) {
+                    this.traverseLeft(true);
+                } else {
+                    this.traverseRight(true);
+                }
+                break;
+
+            default: captured = false;
+        }
+        if(captured) {
+            event.preventDefault();
+        }
+    },
+
+    /**
+     * Handles global keyboard control.
      * 
      * @method handleGlobalKeypress
      * @param event {Event}
@@ -479,7 +573,20 @@ UserInterface.prototype = {
             // enter key
             case 13: this.addChild(); break;
 
-            default: console.log('global keycode', event.keyCode);
+            default: console.log('uncaptured global keypress', event.keyCode);
+        }
+    },
+
+    /**
+     * Handles viewport resize
+     * 
+     * @method handleResize
+     * @param event {Event}
+     **/
+    handleResize: function(event) {
+        // move absolutely positioned menu
+        if(this.menuVisible) {
+            this.showMenu();
         }
     },
 
@@ -531,6 +638,12 @@ UserInterface.prototype = {
         // redraw tree if changed
         this.draw();
     },
+
+
+
+    /********************************
+     * INITIALIZERS
+     ********************************/
 
     /**
      * Initializes font settings selectors.
@@ -631,6 +744,7 @@ UserInterface.prototype = {
         this.initFonts();
 
         // populate settings elements with defaults
+        // any named element [name="settings_{key}"]
         for(var key in options) {
             if(key === 'fonts') { continue; }
 
@@ -643,8 +757,6 @@ UserInterface.prototype = {
                 } else {
                     elem[0].value = options[key];
                 }
-            } else {
-                console.log('no DOM element for setting', key);
             }
         }     
 
@@ -655,10 +767,14 @@ UserInterface.prototype = {
         _listen(document.querySelectorAll('[data-action]'), 'click', this.handleAction.bind(this));
 
         // databind the tree contents text input
-        _listen(this.textElement, 'keydown keyup paste input', this.handleTextUpdate.bind(this));
+        _listen(this.textElement, 'keyup paste input', this.handleTextUpdate.bind(this));
+        _listen(this.textElement, 'keydown', this.handleTextKeypress.bind(this));
 
         // keyboard controls
         _listen(document, 'keydown', this.handleGlobalKeypress.bind(this));
+
+        // resizing
+        _listen(window, 'resize', this.handleResize.bind(this));
 
         // select root node
         this.select(this.tree, true, true, false);
