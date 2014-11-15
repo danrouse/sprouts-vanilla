@@ -1,3 +1,4 @@
+/* global _svgelem */
 'use strict';
 
 /**
@@ -21,6 +22,13 @@ var TreeNode = function(options) {
      * @property parent {TreeNode}
      **/
     this.parent = options.parent;
+
+    /**
+     * lexical head
+     *
+     * @property head {String}
+     **/
+    this.head = null;
 
     /**
      * list of child TreeNodes
@@ -270,7 +278,7 @@ TreeNode.prototype = {
             options = this.options,
             lines = [],
             elemWidth = 0,
-            label, head, children,
+            label, head, children, line,
             i;
 
         // SVG must be rendered for getBBox to get size
@@ -314,7 +322,7 @@ TreeNode.prototype = {
                 });
 
                 // create connecting line at top center of child
-                var line = _svgelem('line');
+                line = _svgelem('line');
                 line._attrs({
                     'class': 'sprouts__line',
 
@@ -394,7 +402,7 @@ TreeNode.prototype = {
                 svg.appendChild(triangle);
             } else if(hasConnector) {
                 // connect head with line
-                var line = _svgelem('line', {
+                line = _svgelem('line', {
                     'class': 'sprouts__line',
                     'x1': centerX,
                     'x2': centerX,

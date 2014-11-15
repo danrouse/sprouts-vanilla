@@ -1,3 +1,4 @@
+/* global TreeNode, UserInterface */
 'use strict';
 
 (function() {
@@ -33,6 +34,6 @@
     // make a basic tree
     var tree = new TreeNode({
             fromString: '[VP [VP [V Draw][NP ^syntax trees]][PP [P with][NP Sprouts]]]',
-            options: defaults }),
-        UI = new UserInterface(tree);
+            options: defaults });
+    new UserInterface(tree);
 })();

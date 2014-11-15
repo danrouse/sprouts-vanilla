@@ -1,3 +1,4 @@
+/* exported _svgelem, _download, _listen */
 'use strict';
 
 // wrapper around SVG+child element creation
@@ -25,4 +26,17 @@ function _download(data, filename) {
     link.setAttribute('href', data);
     link.setAttribute('download', filename);
     link.click();
+}
+
+// bind multiple events
+function _listen(elems, events, listener) {
+    events = events.split(' ');
+    if(!elems.length) {
+        elems = [elems];
+    }
+    for(var i=0; i<elems.length; i++) {
+        for(var j in events) {
+            elems[i].addEventListener(events[j], listener);
+        }
+    }
 }
