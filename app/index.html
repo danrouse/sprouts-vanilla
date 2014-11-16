@@ -22,140 +22,112 @@
         
         <header class="header">
             <svg class="logo"><use xlink:href="#icon-logo" /></svg>
+            <ul class="header-links">
+                <li><a href="https://github.com/kremonte/sprouts">
+                    <div class="icontooltip" data-icon="github"></div>view source on github</a></li>
+                <li><a href="https://github.com/kremonte/sprouts/issues">
+                    <div class="icontooltip" data-icon="comment"></div>report a bug or suggest a feature</a></li>
+            </ul>
         </header>
 
-        <aside class="sidebar" id="sidebar">
+        <aside class="sidebar" id="settings-sidebar">
             <button data-action="toggleSidebar" class="toggle-button">
-                <svg class="icon"><use xlink:href="#icon-left" /></svg>
-                <span class="icon-desc">Toggle sidebar</span>
+                <div class="icontooltip" data-icon="left"></div>
             </button>
 
-            <h2>
-                <svg class="icon"><use xlink:href="#icon-gear" /></svg>
-                Settings
-            </h2>
+            <h2><div class="icontooltip" data-icon="gear"></div>Settings</h2>
 
-            <h3 class="collapsible" data-action="toggleCollapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Tree settings</h3>
+            <h3 class="collapsible" data-action="toggleCollapsible"><div class="icontooltip" data-icon="minus"></div>Tree settings</h3>
             <ul class="settings">
                 <li>
-                    <label for="settings_linePadding">
-                        <svg class="icon"><use xlink:href="#icon-padding" /></svg>
-                        Line padding</label
+                    <label for="settings_linePadding"><div class="icontooltip" data-icon="padding"></div>Line padding</label
                     ><input name="settings_linePadding" type="number" class="setting">
                 </li>
                 <li>
-                    <label for="settings_lineWidth">
-                        <svg class="icon"><use xlink:href="#icon-width" /></svg>
-                        Line thickness</label
+                    <label for="settings_lineWidth"><div class="icontooltip" data-icon="width"></div>Line thickness</label
                     ><input name="settings_lineWidth" type="number" class="setting">
                 </li>
                 <li>
-                    <label for="settings_lineColor">
-                        <svg class="icon"><use xlink:href="#icon-palette" /></svg>
-                        Line color</label
+                    <label for="settings_lineColor"><div class="icontooltip" data-icon="palette"></div>Line color</label
                     ><input name="settings_lineColor" type="color" class="setting">
                 </li>
                 <li>
-                    <label for="settings_showTraces">
-                        <svg class="icon"><use xlink:href="#icon-gear" /></svg>
-                        Show traces</label
+                    <label for="settings_showTraces"><div class="icontooltip" data-icon="gear"></div>Show traces</label
                     ><input id="settings_showTraces" name="settings_showTraces" type="checkbox" class="setting">
                 </li>
             </ul>
 
-            <h3 class="collapsible" data-action="toggleCollapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Node settings</h3>
+            <h3 class="collapsible" data-action="toggleCollapsible"><div class="icontooltip" data-icon="minus"></div>Node settings</h3>
             <ul class="settings">
                 <li>
-                    <label for="settings_nodeSpacingY">
-                        <svg class="icon"><use xlink:href="#icon-height" /></svg>
-                        Child spacing</label
+                    <label for="settings_nodeSpacingY"><div class="icontooltip" data-icon="height"></div>Child spacing</label
                     ><input name="settings_nodeSpacingY" type="number" class="setting">
                 </li>
                 <li>
-                    <label for="settings_nodeSpacingX">
-                        <svg class="icon"><use xlink:href="#icon-width" /></svg>
-                        Sibling spacing</label
+                    <label for="settings_nodeSpacingX"><div class="icontooltip" data-icon="width"></div>Sibling spacing</label
                     ><input name="settings_nodeSpacingX" type="number" class="setting">
                 </li>
-                <li class="font-selector" data-font="head">
-                    <label for="fontSize">
-                        <svg class="icon"><use xlink:href="#icon-font-size" /></svg>
-                        Font size</label
+                <li class="font-selector" data-font="node">
+                    <label for="fontSize"><div class="icontooltip" data-icon="font-size"></div>Font size</label
                     ><input type="range" name="fontSize" min="5" max="60" step="1">
                     
-                    <label class="font-settings-label">
-                        <svg class="icon"><use xlink:href="#icon-gear" /></svg>
-                        Font style</label>
+                    <label class="font-settings-label"><div class="icontooltip" data-icon="gear"></div>Font style</label>
 
                     <!-- floated elements -->
                     <input type="color" name="color">
 
                     <input type="checkbox" name="italic" id="font-node-italic">
-                    <label for="font-node-italic"><svg class="icon"><use xlink:href="#icon-italic" /></use></svg></label>
+                    <label for="font-node-italic"><div class="icontooltip" data-icon="italic"></div></label>
 
                     <input type="checkbox" name="bold" id="font-node-bold">
-                    <label for="font-node-bold"><svg class="icon"><use xlink:href="#icon-bold" /></use></svg></label>
+                    <label for="font-node-bold"><div class="icontooltip" data-icon="bold"></div></label>
                     
                     
                     <p class="font-preview">Font preview</p>
                 </li>
             </ul>
 
-            <h3 class="collapsible" data-action="toggleCollapsible"><svg class="icon"><use xlink:href="#icon-minus" /></svg>Head settings</h3>
+            <h3 class="collapsible" data-action="toggleCollapsible"><div class="icontooltip" data-icon="minus"></div>Head settings</h3>
             <ul class="settings">
                 <li>
-                    <label for="settings_headLines">
-                        <svg class="icon"><use xlink:href="#icon-height" /></svg>
-                        Connect heads with lines</label
+                    <label for="settings_headLines"><div class="icontooltip" data-icon="height"></div>Connect heads with lines</label
                     ><input id="settings_headLines" name="settings_headLines" type="checkbox" class="setting">
                 </li>
                 <li>
-                    <label for="settings_lazyTriangles">
-                        <svg class="icon"><use xlink:href="#icon-triangle" /></svg>
-                        Lazy triangles</label
+                    <label for="settings_lazyTriangles"><div class="icontooltip" data-icon="triangle"></div>Lazy triangles</label
                     ><input id="settings_lazyTriangles" name="settings_lazyTriangles" type="checkbox" class="setting">
                 </li>
                 <li class="font-selector" data-font="head">
-                    <label for="fontSize">
-                        <svg class="icon"><use xlink:href="#icon-font-size" /></svg>
-                        Font size</label
+                    <label for="fontSize"><div class="icontooltip" data-icon="font-size"></div>Font size</label
                     ><input type="range" name="fontSize" min="5" max="60" step="1">
                     
-                    <label class="font-settings-label">
-                        <svg class="icon"><use xlink:href="#icon-gear" /></svg>
-                        Font style</label>
+                    <label class="font-settings-label"><div class="icontooltip" data-icon="gear"></div>Font style</label>
                     
                     <!-- floated elements -->
                     <input type="color" name="color">
 
                     <input type="checkbox" name="italic" id="font-node-italic">
-                    <label for="font-node-italic"><svg class="icon"><use xlink:href="#icon-italic" /></use></svg></label>
+                    <label for="font-node-italic"><div class="icontooltip" data-icon="italic"></div></label>
 
                     <input type="checkbox" name="bold" id="font-node-bold">
-                    <label for="font-node-bold"><svg class="icon"><use xlink:href="#icon-bold" /></use></svg></label>
+                    <label for="font-node-bold"><div class="icontooltip" data-icon="bold"></div></label>
                     
                     <p class="font-preview">Font preview</p>
                 </li>
             </ul>
         </aside>
 
+        <aside class="sidebar" id="info-sidebar">
+            <h2><div class="icontooltip" data-icon="question"></div>Information</h2>
+        </aside>
+
         <section class="main" id="main">
             <nav class="toolbar">
-                <button data-action="newTree">
-                    <svg class="icon"><use xlink:href="#icon-plus" /></svg>
-                    New Tree</button>
-                <button data-action="showLoadMenu">
-                    <svg class="icon"><use xlink:href="#icon-open" /></svg>
-                    Open Tree</button>
-                <button data-action="saveSVG">
-                    <svg class="icon"><use xlink:href="#icon-save" /></svg>
-                    Save SVG</button>
-                <button data-action="savePNG">
-                    <svg class="icon"><use xlink:href="#icon-save" /></svg>
-                    Save PNG</button>
-                <a href="#" id="sprouts-permalink"><button>
-                    <svg class="icon"><use xlink:href="#icon-link" /></svg>
-                    Permalink</button></a>
+                <button data-action="newTree"><div class="icontooltip" data-icon="plus">New Tree</div></button>
+                <button data-action="showLoadMenu"><div class="icontooltip" data-icon="plus">Open Tree</div></button>
+                <button data-action="saveSVG"><div class="icontooltip" data-icon="save">Save as .SVG</div></button>
+                <button data-action="savePNG"><div class="icontooltip" data-icon="save">Save as .PNG</div></button>
+                <a href="#" id="sprouts-permalink"><button><div class="icontooltip" data-icon="link">Permalink</div></button></a>
             </nav>
             
             <p class="sprouts-text" id="sprouts-text" contenteditable="true" tabindex="0"></p>
@@ -164,27 +136,17 @@
             
             <nav class="sprouts-action-menu" id="sprouts-action-menu">
                 <ul>
-                    <li data-action="addParent"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
-                    <li data-action="removeNode"><svg class="icon"><use xlink:href="#icon-minus" /></svg></li>
-                    <li data-action="addSiblingRight"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
-                    <li data-action="addChildRight"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
-                    <li data-action="addChild"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
-                    <li data-action="addChildLeft"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
-                    <li data-action="addSiblingLeft"><svg class="icon"><use xlink:href="#icon-plus" /></svg></li>
-                    <li data-action="startMovement"><svg class="icon"><use xlink:href="#icon-move" /></svg></li>
+                    <li data-action="addParent"><div class="icontooltip" data-icon="plus"></div></li>
+                    <li data-action="removeNode"><div class="icontooltip" data-icon="minus"></div></li>
+                    <li data-action="addSiblingRight"><div class="icontooltip" data-icon="plus"></div></li>
+                    <li data-action="addChildRight"><div class="icontooltip" data-icon="plus"></div></li>
+                    <li data-action="addChild"><div class="icontooltip" data-icon="plus"></div></li>
+                    <li data-action="addChildLeft"><div class="icontooltip" data-icon="plus"></div></li>
+                    <li data-action="addSiblingLeft"><div class="icontooltip" data-icon="plus"></div></li>
+                    <li data-action="startMovement"><div class="icontooltip" data-icon="move"></div></li>
                 </ul>
             </nav>
         </section>
-
-        <footer class="footer">
-            <ul>
-                <li><a href="http://rouse.house">
-                    <svg class="icon"><use xlink:href="#icon-comment" /></svg>Dan Rouse 2014</a></li>
-                <li><a href="https://github.com/kremonte/sprouts">
-                    <svg class="icon"><use xlink:href="#icon-github" /></svg>view source on github</a></li>
-                <li><a href="https://github.com/kremonte/sprouts/issues">
-                    <svg class="icon"><use xlink:href="#icon-bug" /></svg>report a bug or suggest a feature</a></li>
-        </footer>
 
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->

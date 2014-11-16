@@ -91,14 +91,14 @@ UserInterface.prototype = {
     /**
      * Selects a node in the tree.
      *
-     * @method select
+     * @method selectNode
      * @param targetNode {TreeNode}
      * @param redrawTree {Boolean}
      * @param redrawText {Boolean}
      * @param selectText {Boolean}
      * @return targetNode {TreeNode} selected node
      **/
-    select: function(targetNode, redrawTree, redrawText, selectText) {
+    selectNode: function(targetNode, redrawTree, redrawText, selectText) {
         if(redrawTree) { this.draw(); }
 
         // remove existing selection class
@@ -142,7 +142,7 @@ UserInterface.prototype = {
      **/
     traverseUp: function(selectText) {
         if(this.selectedNode.parent) {
-            this.select(this.selectedNode.parent, false, true, selectText);
+            this.selectNode(this.selectedNode.parent, false, true, selectText);
         }
     },
 
@@ -154,7 +154,7 @@ UserInterface.prototype = {
      **/
     traverseDown: function(selectText) {
         if(this.selectedNode.children.length) {
-            this.select(this.selectedNode.children[Math.floor(this.selectedNode.children.length / 2)], false, true, selectText);
+            this.selectNode(this.selectedNode.children[Math.floor(this.selectedNode.children.length / 2)], false, true, selectText);
         }
     },
 
@@ -178,7 +178,7 @@ UserInterface.prototype = {
         }
         
         if(target) {
-            this.select(target, false, true, selectText);
+            this.selectNode(target, false, true, selectText);
         } else {
             this.traverseUp(selectText);
         }
@@ -204,7 +204,7 @@ UserInterface.prototype = {
         }
         
         if(target) {
-            this.select(target, false, true, selectText);
+            this.selectNode(target, false, true, selectText);
         } else {
             this.traverseDown(selectText);
         }
@@ -224,7 +224,7 @@ UserInterface.prototype = {
     addChild: function() {
         var child = this.selectedNode.addChild('XP',
             Math.floor(this.selectedNode.children.length / 2));
-        this.select(child, true, true, true);
+        this.selectNode(child, true, true, true);
     },
 
     /**
@@ -234,7 +234,7 @@ UserInterface.prototype = {
      */
     addChildLeft: function() {
         var child = this.selectedNode.addChild('XP', 0);
-        this.select(child, true, true, true);
+        this.selectNode(child, true, true, true);
     },
 
     /**
@@ -245,7 +245,7 @@ UserInterface.prototype = {
     addChildRight: function() {
         var child = this.selectedNode.addChild('XP',
             this.selectedNode.children.length);
-        this.select(child, true, true, true);
+        this.selectNode(child, true, true, true);
     },
 
     /**
@@ -257,7 +257,7 @@ UserInterface.prototype = {
         var sel = this.selectedNode,
             index = sel.parent.children.indexOf(sel),
             child = sel.parent.addChild('XP', index);
-        this.select(child, true, true, true);
+        this.selectNode(child, true, true, true);
     },
 
     /**
@@ -269,7 +269,7 @@ UserInterface.prototype = {
         var sel = this.selectedNode,
             index = sel.parent.children.indexOf(sel),
             child = sel.parent.addChild('XP', index + 1);
-        this.select(child, true, true, true);
+        this.selectNode(child, true, true, true);
     },
 
     /**
@@ -282,7 +282,7 @@ UserInterface.prototype = {
         if(this.selectedNode === this.tree) {
             this.tree = parent;
         }
-        this.select(parent, true, true, true);
+        this.selectNode(parent, true, true, true);
     },
 
     /**
@@ -299,7 +299,7 @@ UserInterface.prototype = {
             }
         }
 
-        this.select(newSelection, true);
+        this.selectNode(newSelection, true);
     },
 
     /**
@@ -308,6 +308,8 @@ UserInterface.prototype = {
      * @method startMovement
      **/
     startMovement: function() {
+        console.log('START MOVEMENT'); console.trace();
+        
         var target = this.selectedNode;
         if(!this.nodeToMove) {
             if(!target.coreferenceName.length) {
@@ -377,7 +379,7 @@ UserInterface.prototype = {
     newTree: function() {
         //this.saveLocal();
         this.tree = new TreeNode({ fromString: '[XP]', options: this.tree.options });
-        this.select(this.tree, true, true, false);
+        this.selectNode(this.tree, true, true, false);
     },
 
     /**
@@ -635,10 +637,10 @@ UserInterface.prototype = {
         } else {
             // finish movement or select the node
             if(this.nodeToMove) {
-                this.select(this.nodeToMove.moveTo(target.treeNode), true, false, true);
+                this.selectNode(this.nodeToMove.moveTo(target.treeNode), true, false, true);
                 this.nodeToMove = null;
             } else {
-                this.select(target.treeNode, false, true, true);
+                this.selectNode(target.treeNode, false, true, true);
             }
 
             // show menu
@@ -684,40 +686,9 @@ UserInterface.prototype = {
         }
 
         // update selection and redraw
-        this.select(newNode, true, (event.type === 'paste'));
+        this.selectNode(newNode, true, (event.type === 'paste'));
 
         this.textElement.lastText = this.textElement.innerText;
-    },
-
-    /**
-     * Handles keyboard control within the textarea
-     * 
-     * @method handleTextKeypress
-     * @param event {Event}
-     **/
-    handleTextKeypress: function(event) {
-        var captured = true;
-
-        switch(event.keyCode) {
-            // arrow keys
-            case 38: this.traverseUp(true); break;
-            case 40: this.traverseDown(true); break;
-            // enter key
-            case 13: this.addChild(); break;
-            // tab key
-            case 9:
-                if(event.shiftKey) {
-                    this.traverseLeft(true);
-                } else {
-                    this.traverseRight(true);
-                }
-                break;
-
-            default: captured = false;
-        }
-        if(captured) {
-            event.preventDefault();
-        }
     },
 
     /**
@@ -730,9 +701,21 @@ UserInterface.prototype = {
         var captured = true;
         switch(event.keyCode) {
             // arrow keys
-            case 37: this.traverseLeft(); break;
+            case 37:
+                if(event.target !== this.textElement) {
+                    this.traverseLeft();
+                } else {
+                    captured = false;
+                }
+                break;
             case 38: this.traverseUp(); break;
-            case 39: this.traverseRight(); break;
+            case 39:
+                if(event.target !== this.textElement) {
+                    this.traverseRight();
+                } else {
+                    captured = false;
+                }
+                break;
             case 40: this.traverseDown(); break;
 
             // esc key
@@ -831,7 +814,7 @@ UserInterface.prototype = {
         if(event.target.value !== '...') {
             var tree = this.loadLocal(event.target.value);
             this.tree = tree;
-            this.select(tree, true, true, false);
+            this.selectNode(tree, true, true, false);
             this.loadMenuElement.classList.remove('active');
         }
     },
@@ -955,7 +938,20 @@ UserInterface.prototype = {
                     elem[0].value = options[key];
                 }
             }
-        }     
+        }
+
+        // setup icon tooltips
+        var iconTooltips = document.getElementsByClassName('icontooltip');
+        for(var i=0; i<iconTooltips.length; i++) {
+            var icon = iconTooltips[i].dataset.icon,
+                html = iconTooltips[i].innerHTML,
+                svg = _svgelem('svg'),
+                use = _svgelem('use');
+            use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#icon-' + icon);
+            svg.appendChild(use);
+            svg.classList.add('icon');
+            iconTooltips[i].insertBefore(svg, iconTooltips[i].firstChild);
+        }
 
         // settings handlers
         _listen(document.getElementsByClassName('setting'), 'change', this.handleSetting.bind(this));
@@ -973,6 +969,6 @@ UserInterface.prototype = {
         _listen(window, 'resize', this.handleResize.bind(this));
 
         // select root node
-        this.select(this.tree, true, true, false);
+        this.selectNode(this.tree, true, true, false);
     }
 };

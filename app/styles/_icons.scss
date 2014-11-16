@@ -3,13 +3,22 @@ body > svg:first-child { display: none; }
 
 .icon {
 	//float: left;
-	width: 1.3em;
-	height: 1.3em;
-	margin-top: -.15em;
-	margin-bottom: -.15em;
-	margin-right: .3em;
+	
 }
 
-.icon ~ .icon-desc {
-	display: none;
+.icontooltip {
+	float: left;
+	height: 100%;
+
+	svg {
+		width: 1.3em;
+		height: 1.3em;
+		margin-top: -.15em;
+		margin-bottom: -.15em;
+		margin-right: .3em;
+		fill: currentColor;
+	}
+}
+
+#icon-logo {
 }

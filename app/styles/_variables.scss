@@ -1,17 +1,39 @@
-$tan: #cfba95;
-$white: #efe8dc;
+//$tan: #cfba95;
+//$white: #efe8dc;
 $green: #83d935;
-$blue: #bcd1ff;
-$brown: #2e1a06;
-$red: #9b1d00;
+//$blue: #bcd1ff;
 
+$white: #fff6e5;
 $white2: darken($white, 5%);
+$blue: #2185C5;
+$blue2: #7ECEFD;
+//$red: #FF7F66;
+$black: darken(#3e454c, 8%);
+
+$red: #9b1d00;
+$brown: #2e1a06;
+
+
+//$white2: darken($white, 5%);
 $green2: lighten($green, 10%);
-$blue2: lighten($blue, 5%);
-$tan2: lighten($tan, 5%);
-$tan3: darken($tan, 10%);
+//$blue2: lighten($blue, 5%);
+// $tan2: lighten($tan, 5%);
+// $tan3: darken($tan, 10%);
 $brown2: lighten($brown, 15%);
 $red2: lighten($red, 15%);
 
+// $white: #d8caa8;
+// $green: #5c832f;
+// $green2: #284907;
+// $brown: #382513;
+// $black: #363942;
+
+// $blue: #10222b;
+// $green: #95ab63;
+// $green2: #bdd684;
+// $white: #f6ffe0;
+// $white2: #e2f0d6;
+
+
 $padding: 12px;
-$border: $padding / 3;
+$border: 0;

@@ -1,18 +1,30 @@
 .sidebar {
-    float: left;
-    height: 75%;
-    max-width: 25%;
-    border-right: $border solid $brown;
+    height: 85%;
+    width: 25%;
+    
     background-color: $white2;
-    overflow-y: auto;
+    overflow-y: scroll;
     position: relative;
+    resize: horizontal;
+
+    &:nth-of-type(1) {
+        float: left;
+        //border-right: 2px solid $black;
+    }
+    &:nth-of-type(2) {
+        display:none;
+
+        float: right;
+        border-left: $border solid $brown;
+    }
 
     h2 {
         display: block;
         padding: $padding;
-        background-color: $tan3;
+        background-color: $blue;
         font-size: 1.414em;
     }
+
     h3 {
         padding: ($padding / 2) $padding;
         //border-top: ($border / 2) solid $brown2;
@@ -20,7 +32,7 @@
         margin-bottom: $padding;
         font-weight: bold;
         font-size: 1em;
-        background-color: $tan;
+        background-color: $blue2;
 
         .icon {
             font-size: .5em;
@@ -29,7 +41,7 @@
 
         &:hover {
             cursor: pointer;
-            background-color: $tan2;
+            background-color: $blue2;
         }
     }
 
@@ -53,8 +65,6 @@
     &.collapsed {
         overflow: hidden;
         width: 3em;
-        background-color: $tan;
-
         .toggle-button {
             display: block;
             right: $padding / 2;
@@ -83,10 +93,11 @@
         }
         input,
         select {
-            margin: 0;
+            margin: 0 0 2px;
             width: 30%;
             height: 2em;
-            text-align: right;
+            text-align: center;
+            resize: none;
         }
 
         input[type="color"] {
@@ -110,7 +121,7 @@
                 z-index: 9001;
                 //border: ($border / 3) solid $brown;
                 //border-bottom-width: $border * 2;
-                border-bottom: ($border * 2) solid $brown;
+                border-bottom: 2px solid $black;
 
                 clip: rect(0, 1000px, 0px, 0);
                 transition: clip 0.1s ease-out;
@@ -122,10 +133,10 @@
             }
                 li {
                     padding: ($padding / 2) $padding;
-                    background-color: $blue;
+                    background-color: $white;
 
                     &:hover {
-                        background-color: $green;
+                        background-color: $blue2;
                         cursor: pointer;
                     }
                 }
@@ -142,7 +153,7 @@
             }
             .font-preview {
                 padding: $padding;
-                background-color: $tan2;
+                background-color: $white;
 
                 clear: both;
                 white-space: nowrap;
@@ -150,11 +161,8 @@
                 position: relative;
 
                 &:hover {
-                    background-color: $tan;
+                    background-color: $blue2;
                     cursor: pointer;
-                    &:after {
-                        border-top-color: $brown2;
-                    }
                 }
 
                 &:after {
@@ -191,10 +199,10 @@
                 }
             }
             input[type="checkbox"]:checked + label {
-                background-color: $tan;
+                background-color: $blue;
 
                 &:hover {
-                    background-color: $tan3;
+                    background-color: $blue2;
                 }
             }
         }
