@@ -224,14 +224,14 @@ TreeNode.prototype = {
             currentPhrase = '',
             currentHead = '',
             coreferences = {},
+            coreference = false,
             trackPhrase = true;
 
         for(var i=0; i<text.length; i++) {
-            var coreference = false;
-
             // make a new phrase if necessary
             if(trackPhrase && currentPhrase.length &&
                (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
+                //console.log('capture phrase', currentPhrase, currentHead);
                 currentPhrase = currentPhrase.trim();
                 currentHead = currentHead.trim();
 
@@ -246,8 +246,9 @@ TreeNode.prototype = {
                         currentObject.addChild({ type: currentPhrase, head: currentHead }) :
                         new TreeNode({ type: currentPhrase, head: currentHead, options: this.options, parent: this.parent });
 
-                if(coreference) {
-                    if(coreferences[coreference]) {
+                if(coreference !== false) {
+                    if(coreferences[coreference] &&
+                       currentPhrase === coreferences[coreference].type) {
                         // both references are found, link them
                         newObject.coreference = coreferences[coreference];
                         coreferences[coreference].coreference = newObject;
@@ -260,6 +261,7 @@ TreeNode.prototype = {
                 currentObject = newObject;
                 currentPhrase = '';
                 currentHead = '';
+                coreference = false;
             }
 
             if(text[i] === '[') {
@@ -281,16 +283,19 @@ TreeNode.prototype = {
                     currentObject = currentObject.parent;
                 }
 
-            } else if(trackPhrase && text[i] === ' ') {
+            } else if(trackPhrase && text[i].match(/\s/)) {
                 // start tracking head after space
                 trackPhrase = false;
+                //console.log('space', currentPhrase, currentHead);
 
             } else if(trackPhrase) {
                 // add to phrase if we're tracking and didn't just make one
                 currentPhrase = currentPhrase + text[i];
-
+                //console.log('add to phrase', currentPhrase);
+//[TP [DP_1 ^Anyango] [T' [T ne] [VP [DP_1 t] [V' [V opendZo] [CP [TP [T' [T] [PredP [DP [CP [DP mane] [TP [DP] [T' [T ne] [VP [DP] [V' [V ogero] [DP]]]]]] [D ni]] [Pred' [Pred 0] [PP kanye]]]]] [C (ni)]]]]]]
             } else {
                 currentHead = currentHead + text[i];
+                //console.log('add to head', currentHead);
             }
 
             // currentPhrase = currentPhrase.trim();
@@ -353,6 +358,7 @@ TreeNode.prototype = {
     toSVG: function(rootNode) {
         var svg = _svgelem('svg'),
             options = this.options,
+            labelText = this.type,
             lines = [],
             elemWidth = 0,
             label, head, children, line,
@@ -374,7 +380,12 @@ TreeNode.prototype = {
 
         // add main label
         label = _svgelem('text', { 'class': 'sprouts__label' });
-        label.appendChild(document.createTextNode(this.type));
+        if(labelText[labelText.length - 1] === "'" ||
+           labelText[labelText.length - 1] === '`') {
+            labelText = labelText.substring(0, labelText.length - 1);
+            label._attrs({ 'text-decoration': 'overline' });
+        }
+        label.appendChild(document.createTextNode(labelText));
 
         // coreference label
         if(this.coreferenceName.length) {
@@ -506,54 +517,6 @@ TreeNode.prototype = {
             }            
         }
 
-        // create or update lines for movement
-        if(!rootNode) {
-            // this is the root node, create the lines
-            for(i in this.corefCache) {
-                // get real x/y of each item
-                var realCoords = [];
-                for(var j in this.corefCache[i]) {
-                    var ref = this.corefCache[i][j],
-                        size = ref.svg.getBBox(),
-                        x = 0,
-                        y = 0;
-
-                    while(ref.parent) {
-                        x += parseFloat(ref.svg.getAttribute('x'));
-                        y += parseFloat(ref.svg.getAttribute('y'));
-                        ref = ref.parent;
-                    }
-                    realCoords[j] = [x + size.width / 2, y + size.height + options.fonts.head.fontSize];
-                }
-
-                // setup arc
-                var sweep = (realCoords[0][0] > realCoords[1][0]) ? 1 : 0,
-                    rx = Math.abs(realCoords[0][0] - realCoords[1][0]) / 2,
-                    ry = Math.abs(realCoords[0][1] - realCoords[1][1]) || options.nodeSpacingY;
-
-                var movementLine = _svgelem('path', {
-                    'class': 'sprouts__line',
-                    'd': 'M' + realCoords[0][0] + ',' + realCoords[0][1] +
-                         //'Q' + rx + ',' + Math.max(realCoords[0][1], realCoords[1][1]) + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
-                         ' A' + rx + ',' + ry + ' 0 0,' + sweep + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
-                        // arrow
-                        ' l5,5 -5,-5 -5,5, 10,0'
-                });
-                svg.appendChild(movementLine);
-            }
-
-            // clear the cache
-            this.corefCache = [];
-        } else if(this.isTrace) {
-            // add coreferences to cache
-            if(!rootNode.corefCache) {
-                rootNode.corefCache = [];
-            }
-            rootNode.corefCache.push([this, this.coreference]);
-        } else if(this.coreference) {
-            // non-trace coreference
-        }
-
         // get total width (label + children) and center label
         var bbox = svg.getBBox(),
             width = bbox.width,
@@ -570,6 +533,91 @@ TreeNode.prototype = {
                 'x2': width / 2,
                 'y2': labelHeight + options.linePadding
             });
+        }
+
+        // create or update lines for movement
+        if(!rootNode) {
+            // this is the root node, create the lines
+            if(this.corefCache && this.corefCache.length) {
+                // make arrow end marker def
+                var defs = _svgelem('defs'),
+                    marker = _svgelem('marker', {
+                        'id': 'sprouts-arrow-marker',
+                        'viewBox': '0 0 10 10',
+                        'refX': 1, 'refY': 5,
+                        'markerUnits': 'strokeWidth',
+                        'markerWidth': 5, 'markerHeight': 5,
+                        'orient': 'auto'
+                    }),
+                    markerPath = _svgelem('path', {
+                        'd': 'M 0 0 L 10 5 L 0 10 z'
+                    });
+                marker.appendChild(markerPath);
+                defs.appendChild(marker);
+                svg.appendChild(defs);
+
+                for(i in this.corefCache) {
+                    // get real x/y of each item
+                    var realCoords = [];
+                    for(var j in this.corefCache[i]) {
+                        var ref = this.corefCache[i][j],
+                            size = ref.svg.getBBox(),
+                            x = 0,
+                            y = 0;
+
+                        while(ref.parent) {
+                            x += parseFloat(ref.svg.getAttribute('x'));
+                            y += parseFloat(ref.svg.getAttribute('y'));
+                            ref = ref.parent;
+                        }
+                        realCoords[j] = [x + size.width / 2, y + size.height + options.fonts.head.fontSize];
+                    }
+
+                    // setup arc
+                    var sweep = (realCoords[0][0] > realCoords[1][0]) ? 1 : 0,
+                        rx = Math.abs(realCoords[0][0] - realCoords[1][0]) / 2,
+                        ry = Math.abs(realCoords[0][1] - realCoords[1][1]) || options.nodeSpacingY;
+
+                    var movementLine = _svgelem('path', {
+                        'class': 'sprouts__line',
+                        'd': 'M' + realCoords[0][0] + ',' + realCoords[0][1] +
+                             //'Q' + rx + ',' + Math.max(realCoords[0][1], realCoords[1][1]) + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
+                             ' A' + rx + ',' + ry + ' 0 0,' + sweep + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
+                            // arrow
+                            //' l5,5 -5,-5 -5,5, 10,0'
+                            '',
+                        'marker-end': 'url(#sprouts-arrow-marker)'
+                    });
+                    svg.appendChild(movementLine);
+
+                    // add a circle around moved pieces with constituents
+                    if(this.corefCache[i][1].children.length) {
+                        var circle = _svgelem('path', {
+                            'class': 'sprouts__line',
+                            'style': 'opacity: .5',
+                            'd': 'M' + realCoords[1][0] + ',' + realCoords[1][1] +
+                                 ' A' + (size.width / 1.5) + ',' + (size.height / 2) + ' 0 0,1 ' + realCoords[1][0] + ',' + (realCoords[1][1] - size.height - options.fonts.node.fontSize) +
+                                 ' A' + (size.width / 1.5) + ',' + (size.height / 2) + ' 0 0,1 ' + realCoords[1][0] + ',' + (realCoords[1][1])
+                        });
+                        svg.appendChild(circle);
+                    }
+                }
+                // recalculate size
+                var newBBox = svg.getBBox();
+                width = newBBox.width;
+                height = newBBox.height;
+            }
+
+            // clear the cache
+            this.corefCache = [];
+        } else if(this.isTrace) {
+            // add coreferences to cache
+            if(!rootNode.corefCache) {
+                rootNode.corefCache = [];
+            }
+            rootNode.corefCache.push([this, this.coreference]);
+        } else if(this.coreference) {
+            // non-trace coreference
         }
 
         // explicitly state final size

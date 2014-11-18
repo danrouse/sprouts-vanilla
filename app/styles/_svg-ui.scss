@@ -1,51 +1,3 @@
-.sprouts-text {
-    width: 100%;
-    padding: $padding;
-    border: 0;
-    //border-radius: 0 0 $padding $padding;
-
-    background-color: $blue;
-    font-size: 105%;
-    letter-spacing: 1px;
-    white-space: nowrap;
-    overflow: hidden;
-    
-    &:focus {
-        border-color: $black;
-        //padding: ($padding - 4) ($padding - 2);
-    }
-    &:hover, &:focus {
-        background-color: $blue2;
-    }
-
-    .node {
-        font-weight: bold;
-    }
-    .head {
-        color: $red;
-    }
-}
-
-.sprouts-load-menu {
-    padding: $padding;
-    border-bottom: ($border / 2) solid $brown;
-    background-color: $blue2;
-    display: none;
-
-    select {
-        min-width: 50%;
-        margin: (-$padding) $padding;
-    }
-
-    &.active {
-        display: block;
-    }
-}
-
-.sprouts-tree {
-    padding: $padding * 2;
-}
-
 .sprouts-action-menu {
     position: absolute;
     top: 0;
@@ -57,13 +9,13 @@
 
         li {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 2.5em;
-            height: 2.5em;
+            top: -1.05em;
+            left: -1.05em;
+            width: 2.1em;
+            height: 2.1em;
             text-align: center;
             overflow: hidden;
-            background-color: $blue;
+            background-color: rgba($blue, 0.8);
             color: $black;
             border-radius: 1em;
             border: 2px solid $white;

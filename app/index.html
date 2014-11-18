@@ -124,29 +124,32 @@
         <section class="main" id="main">
             <nav class="toolbar">
                 <button data-action="newTree"><div class="icontooltip" data-icon="plus">New Tree</div></button>
-                <button data-action="showLoadMenu"><div class="icontooltip" data-icon="plus">Open Tree</div></button>
-                <button data-action="saveSVG"><div class="icontooltip" data-icon="save">Save as .SVG</div></button>
-                <button data-action="savePNG"><div class="icontooltip" data-icon="save">Save as .PNG</div></button>
+                <button data-action="showLoadMenu"><div class="icontooltip" data-icon="open">Open Tree</div></button>
+                <button data-action="saveSVG"><div class="icontooltip" data-icon="save">Save .SVG</div></button>
+                <button data-action="savePNG"><div class="icontooltip" data-icon="save">Save .PNG</div></button>
                 <a href="#" id="sprouts-permalink"><button><div class="icontooltip" data-icon="link">Permalink</div></button></a>
-            </nav>
-            
-            <p class="sprouts-text" id="sprouts-text" contenteditable="true" tabindex="0"></p>
-            <div class="sprouts-load-menu" id="sprouts-load-menu">Load a file</div>
+
+                <div class="sprouts-text-container">
+                    <p class="sprouts-text" id="sprouts-text" contenteditable="true" tabindex="0"></p>
+                </div>
+                
+                <div class="sprouts-load-menu" id="sprouts-load-menu">Load a file</div>
+            </nav>            
             <div class="sprouts-tree" id="sprouts-tree"></div>
-            
-            <nav class="sprouts-action-menu" id="sprouts-action-menu">
-                <ul>
-                    <li data-action="addParent"><div class="icontooltip" data-icon="plus"></div></li>
-                    <li data-action="removeNode"><div class="icontooltip" data-icon="minus"></div></li>
-                    <li data-action="addSiblingRight"><div class="icontooltip" data-icon="plus"></div></li>
-                    <li data-action="addChildRight"><div class="icontooltip" data-icon="plus"></div></li>
-                    <li data-action="addChild"><div class="icontooltip" data-icon="plus"></div></li>
-                    <li data-action="addChildLeft"><div class="icontooltip" data-icon="plus"></div></li>
-                    <li data-action="addSiblingLeft"><div class="icontooltip" data-icon="plus"></div></li>
-                    <li data-action="startMovement"><div class="icontooltip" data-icon="move"></div></li>
-                </ul>
-            </nav>
         </section>
+
+        <nav class="sprouts-action-menu" id="sprouts-action-menu">
+            <ul>
+                <li data-action="addParent"><div class="icontooltip" data-icon="plus"></div></li>
+                <li data-action="removeNode"><div class="icontooltip" data-icon="minus"></div></li>
+                <li data-action="addSiblingRight"><div class="icontooltip" data-icon="plus"></div></li>
+                <li data-action="addChildRight"><div class="icontooltip" data-icon="plus"></div></li>
+                <li data-action="addChild"><div class="icontooltip" data-icon="plus"></div></li>
+                <li data-action="addChildLeft"><div class="icontooltip" data-icon="plus"></div></li>
+                <li data-action="addSiblingLeft"><div class="icontooltip" data-icon="plus"></div></li>
+                <li data-action="startMovement"><div class="icontooltip" data-icon="move"></div></li>
+            </ul>
+        </nav>
 
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->

@@ -294,7 +294,14 @@ UserInterface.prototype = {
         var newSelection = this.selectedNode.parent;
         for(var i in newSelection.children) {
             if(newSelection.children[i] === this.selectedNode) {
+                // remove child from parent
                 newSelection.children.splice(i, 1);
+
+                // add children's children to the parent
+                for(var j=this.selectedNode.children.length - 1; j >= 0; j--) {
+                    newSelection.children.splice(i, 0, this.selectedNode.children[j]);
+                }
+                
                 break;
             }
         }
@@ -308,8 +315,6 @@ UserInterface.prototype = {
      * @method startMovement
      **/
     startMovement: function() {
-        console.log('START MOVEMENT'); console.trace();
-        
         var target = this.selectedNode;
         if(!this.nodeToMove) {
             if(!target.coreferenceName.length) {
@@ -519,7 +524,9 @@ UserInterface.prototype = {
     showActionMenu: function() {
         var sel = this.selectedNode,
             label = sel.svg.querySelector('.sprouts__label:first-of-type'),
-            pos = label.getBoundingClientRect();
+            pos = label.getBoundingClientRect(),
+            x = pos.left + (pos.width / 2),
+            y = pos.top + (pos.height / 2);
 
         // decide which buttons should be available
         var rules = {
@@ -536,8 +543,8 @@ UserInterface.prototype = {
         }
 
         // place over label
-        this.actionMenuElement.style.transform = 'translateX(' + pos.left + 'px) ' +
-            'translateY(' + pos.top + 'px)';
+        this.actionMenuElement.style.transform = 'translateX(' + x + 'px) ' +
+            'translateY(' + y + 'px)';
 
         // replay the active animation
         this.actionMenuElement.classList.remove('active');
@@ -554,6 +561,7 @@ UserInterface.prototype = {
      * @method hideActionMenu
      **/
     hideActionMenu: function() {
+        this.actionMenuElement.style.transform = 'translateX(-1000px) translateY(-1000px)';
         this.actionMenuElement.classList.remove('active');
         this.actionMenuVisible = false;
     },
@@ -562,6 +570,12 @@ UserInterface.prototype = {
      * Shows a list of trees saved in localStorage to load
      */
     showLoadMenu: function() {
+        // close menu if it's already open
+        if(this.loadMenuElement.classList.contains('active')) {
+            this.loadMenuElement.classList.remove('active');
+            return;
+        }
+
         var list = document.createElement('select'),
             oldList = this.loadMenuElement.querySelector('select'),
             trees = JSON.parse(window.localStorage.getItem('trees')) || {};
@@ -627,13 +641,14 @@ UserInterface.prototype = {
         // find first svg parent of click event target
         var target = event.target;
 
-        while(target.nodeName !== 'svg') {
+        while(target.parentNode && target.nodeName !== 'svg') {
             target = target.parentNode;
         }
 
         // clicks outside deselect
         if(target === event.target && !target.treeNode.parent) {
             this.hideActionMenu();
+            this.nodeToMove = null;
         } else {
             // finish movement or select the node
             if(this.nodeToMove) {
@@ -686,7 +701,7 @@ UserInterface.prototype = {
         }
 
         // update selection and redraw
-        this.selectNode(newNode, true, (event.type === 'paste'));
+        this.selectNode(newNode, true);
 
         this.textElement.lastText = this.textElement.innerText;
     },
@@ -753,6 +768,29 @@ UserInterface.prototype = {
         // move absolutely positioned menu
         if(this.actionMenuVisible) {
             this.showActionMenu();
+        }
+
+        // set sprouts area padding
+        //this.treeElement.style.paddingTop = (document.querySelector('.toolbar').offsetHeight + 12) + 'px';
+    },
+
+    handleClick: function(event) {
+        // if we're not inside the svg, hide the action menu
+        var inSVG = false,
+            target = event.target;
+
+        if(this.actionMenuVisible) {
+            do {
+                if(target.nodeName === 'svg') {
+                    inSVG = true;
+                    break;
+                }
+                target = target.parentNode;
+            } while(target.parentNode);
+
+            if(!inSVG) {
+                this.hideActionMenu();
+            }
         }
     },
 
@@ -960,13 +998,16 @@ UserInterface.prototype = {
         _listen(document.querySelectorAll('[data-action]'), 'click', this.handleAction.bind(this));
 
         // databind the tree contents text input
-        _listen(this.textElement, 'keyup paste input', this.handleTextUpdate.bind(this));
+        _listen(this.textElement, 'keyup input', this.handleTextUpdate.bind(this));
 
         // keyboard controls
         _listen(document, 'keydown', this.handleKeypress.bind(this));
 
         // resizing
         _listen(window, 'resize', this.handleResize.bind(this));
+
+        // global clicks
+        _listen(document, 'click', this.handleClick.bind(this));
 
         // select root node
         this.selectNode(this.tree, true, true, false);
