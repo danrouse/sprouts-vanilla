@@ -227,11 +227,15 @@ TreeNode.prototype = {
             coreference = false,
             trackPhrase = true;
 
+        // compress whitespace
+        text = text.replace(/\s+/g, ' ');
+
         for(var i=0; i<text.length; i++) {
+            //console.log('text[i]', i, text[i]);
             // make a new phrase if necessary
             if(trackPhrase && currentPhrase.length &&
                (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
-                //console.log('capture phrase', currentPhrase, currentHead);
+                console.log('capture phrase', currentPhrase, currentHead);
                 currentPhrase = currentPhrase.trim();
                 currentHead = currentHead.trim();
 
@@ -412,7 +416,8 @@ TreeNode.prototype = {
                 // generate children recursively
                 var child = this.children[i].toSVG(rootNode || this);
                 children.appendChild(child);
-                var childWidth = child.getBBox().width;
+                //var childWidth = child.getBBox().width;
+                var childWidth = child.width.baseVal.value;
 
                 // Position the child adjacent to any existing siblings
                 child._attrs({
@@ -474,6 +479,11 @@ TreeNode.prototype = {
             // no connectors for traces
             if(this.isTrace) {
                 hasConnector = hasTriangle = false;
+            }
+
+            if(headText === '0') {
+                // replace 0 with null symbol (convenience)
+                headText = '\u2205';
             }
 
             // create and measure head
@@ -561,7 +571,8 @@ TreeNode.prototype = {
                     var realCoords = [];
                     for(var j in this.corefCache[i]) {
                         var ref = this.corefCache[i][j],
-                            size = ref.svg.getBBox(),
+                            //size = ref.svg.getBBox(),
+                            size = { width: ref.svg.width.baseVal.value, height: ref.svg.height.baseVal.value },
                             x = 0,
                             y = 0;
 
@@ -570,7 +581,7 @@ TreeNode.prototype = {
                             y += parseFloat(ref.svg.getAttribute('y'));
                             ref = ref.parent;
                         }
-                        realCoords[j] = [x + size.width / 2, y + size.height + options.fonts.head.fontSize];
+                        realCoords[j] = [x + size.width / 2, y + size.height];
                     }
 
                     // setup arc
@@ -585,8 +596,7 @@ TreeNode.prototype = {
                              ' A' + rx + ',' + ry + ' 0 0,' + sweep + ' ' + realCoords[1][0] + ',' + realCoords[1][1] +
                             // arrow
                             //' l5,5 -5,-5 -5,5, 10,0'
-                            '',
-                        'marker-end': 'url(#sprouts-arrow-marker)'
+                            ''
                     });
                     svg.appendChild(movementLine);
 
@@ -600,6 +610,9 @@ TreeNode.prototype = {
                                  ' A' + (size.width / 1.5) + ',' + (size.height / 2) + ' 0 0,1 ' + realCoords[1][0] + ',' + (realCoords[1][1])
                         });
                         svg.appendChild(circle);
+                    } else {
+                        // add an arrow pointing to moved heads
+                        movementLine._attrs({ 'marker-end': 'url(#sprouts-arrow-marker)' });
                     }
                 }
                 // recalculate size

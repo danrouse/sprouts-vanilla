@@ -13,9 +13,9 @@
                 italic: false
             },
             head: {
-                fontFamily: 'Arial',
+                fontFamily: 'Calibri',
                 fontSize: 10,
-                color: '#9b1d00',
+                color: '#2185C5',
                 bold: false,
                 italic: false
             }

@@ -78,7 +78,7 @@ var UserInterface = function(rootNode) {
      *
      * @property fonts {Array}
      **/
-    this.fonts = ['Open Sans', 'Arial', 'Times New Roman', 'Impact', 'Garamond', 'Comic Sans MS', 'Courier New'];
+    this.fonts = ['Arial', 'Calibri', 'Cambria', 'Comic Sans MS', 'Consolas', 'Courier New', 'Lucida Sans Unicode', 'Tahoma', 'Times New Roman', 'Trebuchet MS', 'Verdana'];
 
     this.init();
 };
@@ -116,7 +116,7 @@ UserInterface.prototype = {
         }
 
         // update selected text area
-        if(redrawText !== false) {
+        if(redrawText) {
             this.textElement.innerHTML = targetNode.toString(false, true);
         }
 
@@ -998,7 +998,7 @@ UserInterface.prototype = {
         _listen(document.querySelectorAll('[data-action]'), 'click', this.handleAction.bind(this));
 
         // databind the tree contents text input
-        _listen(this.textElement, 'keyup input', this.handleTextUpdate.bind(this));
+        _listen(this.textElement, 'keyup', this.handleTextUpdate.bind(this));
 
         // keyboard controls
         _listen(document, 'keydown', this.handleKeypress.bind(this));
