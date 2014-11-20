@@ -21,8 +21,9 @@ function _svgelem(tag, initialAttrs) {
 }
 
 // trigger a download of a data URI
-function _download(data, filename) {
-    var link = document.createElement('a');
+function _download(data, filename, link) {
+    console.log('download', data, filename);
+    link = link || document.createElement('a');
     link.setAttribute('href', data);
     link.setAttribute('download', filename);
     link.click();

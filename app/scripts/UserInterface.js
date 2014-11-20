@@ -393,16 +393,19 @@ UserInterface.prototype = {
      * @method saveSVG
      **/
     saveSVG: function() {
-        var slug = this.tree.toString(true),
-            svg = this.tree.svg,
-            xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + svg.offsetWidth +
-                '" height="' + svg.offsetHeight + '">' + svg.innerHTML + '</svg>';
+        var link = document.getElementById('sprouts-pnglink'),
+            slug = this.tree.toString(true),
+            bbox = this.tree.svg.getBBox(),
+            xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + bbox.width +
+                '" height="' + bbox.height + '">' + this.tree.svg.innerHTML + '</svg>';
+
+        link.setAttribute('href', '');
         this.saveLocal(slug);
 
         // make slug filename-friendly
         slug = slug.toLowerCase().replace(/\s+/g, '-').substr(0,32);
 
-        _download('data:image/svg+xml,' + encodeURIComponent(xml), 'sprouts-' + slug + '.svg');
+        _download('data:image/svg+xml;utf8,' + encodeURIComponent(xml), 'sprouts-' + slug + '.svg', link);
     },
 
     /**
@@ -411,13 +414,19 @@ UserInterface.prototype = {
      * @method savePNG
      **/
     savePNG: function() {
-        var slug = this.tree.toString(true);
+        var link = document.getElementById('sprouts-pnglink'),
+            slug = this.tree.toString(true);
+
+        link.setAttribute('href', '');
         this.saveLocal(slug);
 
         // make slug filename-friendly
         slug = slug.toLowerCase().replace(/\s+/g, '-').substr(0,32);
 
-        _download(this.tree.toPNG(), 'sprouts-' + slug + '.png');
+        // generate png and download when ready
+        this.tree.toPNG(function(data) {
+            _download(data, 'sprouts-' + slug + '.png', link);
+        });
     },
 
     /**
@@ -987,7 +996,7 @@ UserInterface.prototype = {
                 use = _svgelem('use');
             use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '#icon-' + icon);
             svg.appendChild(use);
-            svg.classList.add('icon');
+            svg.setAttribute('class', 'icon');
             iconTooltips[i].insertBefore(svg, iconTooltips[i].firstChild);
         }
 

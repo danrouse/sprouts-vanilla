@@ -235,7 +235,7 @@ TreeNode.prototype = {
             // make a new phrase if necessary
             if(trackPhrase && currentPhrase.length &&
                (text[i] === '[' || text[i] === ']' || text[i] === ' ')) {
-                console.log('capture phrase', currentPhrase, currentHead);
+                //console.log('capture phrase', currentPhrase, currentHead);
                 currentPhrase = currentPhrase.trim();
                 currentHead = currentHead.trim();
 
@@ -650,31 +650,34 @@ TreeNode.prototype = {
 
     /**
      * Creates a PNG image based on a generated SVG
+     * Asynchronous, needs a callback
      *
      * @method toPNG
+     * @param {Function} callback function to run when PNG is ready
      * @return image {String} dataURL image/png
      **/
-    toPNG: function() {
+    toPNG: function(callback) {
         if(!this.svg) {
             this.toSVG();
         }
 
-        var svg = this.svg,
+        var bbox = this.svg.getBBox(),
             img = new Image();
 
         // make image from svg
-        //svg._attrs({ xmlns: 'http://www.w3.org/2000/svg' });
-        var xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + svg.offsetWidth +
-            '" height="' + svg.offsetHeight + '">' + svg.innerHTML + '</svg>';
-        img.src = 'data:image/svg+xml,' + encodeURIComponent(xml);
+        var xml = '<svg xmlns="http://www.w3.org/2000/svg" width="' + bbox.width +
+            '" height="' + bbox.height + '">' + this.svg.innerHTML + '</svg>';
 
-        // draw image to a canvas
         var canvas = document.createElement('canvas');
-        canvas.width = svg.offsetWidth;
-        canvas.height = svg.offsetHeight;
+        canvas.width = bbox.width;
+        canvas.height = bbox.height;
         var ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0);
-
-        return canvas.toDataURL('image/png');
+        
+        // blit image to canvas
+        img.onload = function() {
+                ctx.drawImage(img, 0, 0);
+                callback(canvas.toDataURL('image/png'));
+        };
+        img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(xml);
     }
 };
